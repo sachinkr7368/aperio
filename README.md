@@ -1,32 +1,32 @@
 # Aperio
 
-**The free open-source API platform** — interactive docs, lint, mock, and diff for OpenAPI.
+**Free open-source OpenAPI docs engine** — interactive reference, lint, mock, and diff.
 
-Built as a serious alternative to paid API documentation products. No seats. No signup wall. MIT licensed.
+Not a paid seat-based portal. You own the OpenAPI file; publish via **playground**, **embed**, or **self-host**.
 
 **Live:** [https://aperio-nine.vercel.app](https://aperio-nine.vercel.app)
 
-## Product suite
+## Product (final scope)
 
-| Product | Path | Description |
-|---------|------|-------------|
-| **Reference** | `/demo`, `/playground` | Interactive OpenAPI docs + try-it-out client |
-| **Linter** | `/lint` | Quality score (A–F) and rule findings |
-| **Mock** | `/mock` | Example responses from your spec |
-| **Diff** | `/compare` | Compare two OpenAPI versions |
-| **Catalog / Embed** | `/catalog`, `/embed` | Samples + iframe embed for public specs |
-| **Pricing** | `/pricing` | Free forever Community tier |
+| Product | Path | Purpose |
+|---------|------|---------|
+| Playground | `/playground` | Import OpenAPI → interactive docs |
+| Reference demo | `/demo` | Full Petstore experience |
+| Linter | `/lint` | Quality score A–F |
+| Mock | `/mock` | Example responses from the spec |
+| Diff | `/compare` | Compare two OpenAPI versions |
+| Catalog / embed | `/catalog`, `/embed` | Samples + iframe embed |
+| **How to publish** | `/publish` | Embed or self-host your docs |
+| Pricing | `/pricing` | Free forever |
+| Docs | `/docs` | Platform guide |
 
-## Features
+## How teams publish docs
 
-- OpenAPI 3.x / Swagger JSON & YAML, `$ref` resolution
-- Three-pane reference, ⌘K search, models, security schemes
-- Request client: auth, headers, env `{{vars}}`, history, 10 languages
-- Linter API `POST /api/lint`
-- Mock API `POST /api/mock`
-- Spec fetch proxy `GET /api/fetch-spec?url=`
-- Dark / light themes, export JSON/YAML
-- Self-host on Vercel or Node
+1. **Playground** — paste/upload/URL for instant docs  
+2. **Embed** — host `openapi.json`, iframe Aperio  
+3. **Self-host** — clone repo, deploy on Vercel/Node, brand it  
+
+No signup for readers or authors on the free cloud tools.
 
 ## Quickstart
 
@@ -39,8 +39,7 @@ npm run dev
 
 ```bash
 npm run build && npm start
-# or
-npx vercel
+# or: npx vercel
 ```
 
 ## License

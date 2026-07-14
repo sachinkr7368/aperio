@@ -17,6 +17,7 @@ const cols = [
     title: "Resources",
     links: [
       { href: "/docs", label: "Documentation" },
+      { href: "/publish", label: "How to publish" },
       { href: "/pricing", label: "Pricing" },
       { href: "/embed?sample=petstore", label: "Embed demo" },
     ],

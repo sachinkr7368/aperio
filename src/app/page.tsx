@@ -115,17 +115,17 @@ export default function HomePage() {
                 </span>
               </h1>
               <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-[var(--text-muted)] sm:text-lg">
-                Aperio is built as a serious alternative to paid API
-                documentation platforms: beautiful references, a real request
-                client, linting, mocks, and version diffs — without the seat tax.
+                Free OpenAPI engine for interactive docs, lint, mock, and diff.
+                Embed on your site or self-host — no seats, no signup wall, MIT
+                licensed.
               </p>
               <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
                 <Link href="/playground" className="btn-primary">
                   <IconPlay size={16} />
                   Open playground
                 </Link>
-                <Link href="/demo" className="btn-secondary">
-                  Live API demo
+                <Link href="/publish" className="btn-secondary">
+                  How to publish
                 </Link>
                 <a
                   href="https://github.com/sachinkr7368/aperio"

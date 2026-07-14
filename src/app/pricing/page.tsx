@@ -38,9 +38,8 @@ export default function PricingPage() {
               Free forever. Open source.
             </h1>
             <p className="mx-auto mt-3 max-w-xl text-sm text-[var(--text-muted)]">
-              Competitors charge for seats, branding, and basic embeds. Aperio
-              ships the full platform under MIT — use it, fork it, white-label
-              it.
+              Aperio is a free docs engine: playground, reference, lint, mock,
+              diff, and embed. Self-host or embed on your domain — no seat tax.
             </p>
           </div>
 

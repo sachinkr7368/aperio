@@ -63,6 +63,12 @@ export default function DocsPage() {
             </p>
 
             <h2 id="platform">Platform overview</h2>
+            <p>
+              Aperio is intentionally a free engine (not a paid multi-tenant
+              portal). You own the OpenAPI file; use playground, embed, or
+              self-host to publish. See{" "}
+              <Link href="/publish">How to publish</Link>.
+            </p>
             <ul>
               <li>
                 <Link href="/playground">Playground</Link> — import OpenAPI
@@ -82,6 +88,9 @@ export default function DocsPage() {
               </li>
               <li>
                 <Link href="/catalog">Catalog</Link> — samples & embed snippets
+              </li>
+              <li>
+                <Link href="/publish">Publish</Link> — embed or self-host guide
               </li>
             </ul>
 

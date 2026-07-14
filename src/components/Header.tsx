@@ -21,10 +21,12 @@ const product = [
   { href: "/mock", label: "Mock", desc: "Responses from your spec" },
   { href: "/compare", label: "Diff", desc: "Compare two versions" },
   { href: "/catalog", label: "Catalog", desc: "Samples & embed" },
+  { href: "/publish", label: "How to publish", desc: "Embed or self-host your docs" },
 ];
 
 const nav = [
   { href: "/docs", label: "Docs" },
+  { href: "/publish", label: "Publish" },
   { href: "/pricing", label: "Pricing" },
 ];
 
