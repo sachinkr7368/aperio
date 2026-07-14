@@ -4,29 +4,31 @@
 
 Not a paid seat-based portal. You own the OpenAPI file; publish via **playground**, **embed**, or **self-host**.
 
-**Live:** [https://aperio-nine.vercel.app](https://aperio-nine.vercel.app)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
 
-## Product (final scope)
+**Live demo:** [https://aperio-nine.vercel.app](https://aperio-nine.vercel.app)
 
-| Product | Path | Purpose |
-|---------|------|---------|
-| Playground | `/playground` | Import OpenAPI → interactive docs |
-| Reference demo | `/demo` | Full Petstore experience |
-| Linter | `/lint` | Quality score A–F |
-| Mock | `/mock` | Example responses from the spec |
-| Diff | `/compare` | Compare two OpenAPI versions |
-| Catalog / embed | `/catalog`, `/embed` | Samples + iframe embed |
-| **How to publish** | `/publish` | Embed or self-host your docs |
-| Pricing | `/pricing` | Free forever |
-| Docs | `/docs` | Platform guide |
+## Why Aperio?
 
-## How teams publish docs
+| Write yourself | Generate from OpenAPI |
+|----------------|------------------------|
+| Getting started guides, tutorials | Endpoint reference, params, schemas |
+| Product explainers | Try-it-out + code samples |
 
-1. **Playground** — paste/upload/URL for instant docs  
-2. **Embed** — host `openapi.json`, iframe Aperio  
-3. **Self-host** — clone repo, deploy on Vercel/Node, brand it  
+Aperio focuses on the **reference** side: drop in OpenAPI/Swagger → interactive docs and tooling. Free, no account required.
 
-No signup for readers or authors on the free cloud tools.
+## Features
+
+- Interactive API reference (tags, models, security schemes)
+- Try-it-out client (Bearer / API key / Basic, env `{{vars}}`, history)
+- Code samples in 10 languages
+- OpenAPI linter with score (A–F)
+- Mock responses from examples/schemas
+- Spec diff between two versions
+- Embeddable iframe (`/embed?url=…`)
+- Dark / light theme
+- Self-host friendly (Vercel / Node)
 
 ## Quickstart
 
@@ -37,11 +39,61 @@ npm install
 npm run dev
 ```
 
+Open [http://localhost:3000](http://localhost:3000).
+
 ```bash
 npm run build && npm start
 # or: npx vercel
 ```
 
+No environment variables required for the default free setup.
+
+## Product map
+
+| Path | Purpose |
+|------|---------|
+| `/playground` | Import OpenAPI → interactive docs |
+| `/demo` | Petstore live reference |
+| `/lint` | Quality score & findings |
+| `/mock` | Mock responses from a spec |
+| `/compare` | Diff two OpenAPI documents |
+| `/catalog` | Samples + embed snippet |
+| `/publish` | How to publish (embed / self-host) |
+| `/embed` | Chrome-less reference for iframes |
+| `/docs` | Platform documentation |
+| `/pricing` | Free forever |
+
+## How to publish your API docs
+
+1. Export OpenAPI from your API (or write `openapi.yaml`)
+2. Preview in the [playground](https://aperio-nine.vercel.app/playground)
+3. Optionally [lint](https://aperio-nine.vercel.app/lint) it
+4. **Embed** on your site or **self-host** this app  
+
+Guide: [https://aperio-nine.vercel.app/publish](https://aperio-nine.vercel.app/publish)
+
+```html
+<iframe
+  src="https://aperio-nine.vercel.app/embed?url=https://YOUR_API.com/openapi.json"
+  style="width:100%;height:80vh;border:0;border-radius:12px"
+  title="API Reference"
+></iframe>
+```
+
+## Stack
+
+- Next.js (App Router) + React + TypeScript
+- Tailwind CSS
+- `js-yaml` for YAML OpenAPI
+
+## Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md). PRs welcome.
+
+## Security
+
+See [SECURITY.md](./SECURITY.md).
+
 ## License
 
-[MIT](./LICENSE)
+[MIT](./LICENSE) — free to use, fork, and commercialize with attribution in the license sense (keep the MIT notice).

@@ -2,8 +2,27 @@
   "name": "aperio",
   "version": "0.1.0",
   "private": true,
-  "description": "Free open-source API documentation from OpenAPI and Swagger",
+  "description": "Free open-source OpenAPI docs engine — interactive reference, lint, mock, and diff",
   "license": "MIT",
+  "homepage": "https://aperio-nine.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sachinkr7368/aperio.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sachinkr7368/aperio/issues"
+  },
+  "keywords": [
+    "openapi",
+    "swagger",
+    "api-documentation",
+    "api-reference",
+    "api-docs",
+    "lint",
+    "mock",
+    "nextjs",
+    "open-source"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
