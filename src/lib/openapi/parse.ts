@@ -54,7 +54,11 @@ export function parseOpenAPI(input: string): OpenAPIDocument {
   return resolveRefs(doc, doc) as OpenAPIDocument;
 }
 
-export function resolveRefs<T>(node: T, root: OpenAPIDocument, seen = new Set<string>()): T {
+export function resolveRefs<T>(
+  node: T,
+  root: OpenAPIDocument,
+  seen = new Set<string>()
+): T {
   if (node === null || typeof node !== "object") return node;
 
   if (Array.isArray(node)) {
@@ -68,7 +72,9 @@ export function resolveRefs<T>(node: T, root: OpenAPIDocument, seen = new Set<st
     seen.add(ref);
     const resolved = getByPointer(root, ref);
     if (resolved === undefined) return node;
-    const merged = { ...(resolveRefs(resolved, root, new Set(seen)) as object) };
+    const merged = {
+      ...(resolveRefs(resolved, root, new Set(seen)) as object),
+    };
     for (const [k, v] of Object.entries(obj)) {
       if (k !== "$ref") (merged as Record<string, unknown>)[k] = v;
     }
@@ -218,7 +224,8 @@ export function schemaExample(schema?: OpenAPISchema, depth = 0): unknown {
       if (schema.format === "date-time") return new Date().toISOString();
       if (schema.format === "date") return new Date().toISOString().slice(0, 10);
       if (schema.format === "email") return "user@example.com";
-      if (schema.format === "uuid") return "00000000-0000-0000-0000-000000000000";
+      if (schema.format === "uuid")
+        return "00000000-0000-0000-0000-000000000000";
       if (schema.format === "uri" || schema.format === "url")
         return "https://example.com";
       return schema.title || "string";
@@ -278,17 +285,35 @@ export function methodColor(method: string): string {
   const m = method.toLowerCase();
   switch (m) {
     case "get":
-      return "bg-emerald-500/15 text-emerald-400 ring-emerald-500/30";
+      return "text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/25";
     case "post":
-      return "bg-sky-500/15 text-sky-400 ring-sky-500/30";
+      return "text-[#3b82f6] bg-[#3b82f6]/10 border-[#3b82f6]/25";
     case "put":
-      return "bg-amber-500/15 text-amber-400 ring-amber-500/30";
+      return "text-[#f59e0b] bg-[#f59e0b]/10 border-[#f59e0b]/25";
     case "patch":
-      return "bg-orange-500/15 text-orange-400 ring-orange-500/30";
+      return "text-[#f97316] bg-[#f97316]/10 border-[#f97316]/25";
     case "delete":
-      return "bg-rose-500/15 text-rose-400 ring-rose-500/30";
+      return "text-[#ef4444] bg-[#ef4444]/10 border-[#ef4444]/25";
     default:
-      return "bg-zinc-500/15 text-zinc-300 ring-zinc-500/30";
+      return "text-zinc-300 bg-zinc-500/10 border-zinc-500/25";
+  }
+}
+
+export function methodDot(method: string): string {
+  const m = method.toLowerCase();
+  switch (m) {
+    case "get":
+      return "bg-[#22c55e]";
+    case "post":
+      return "bg-[#3b82f6]";
+    case "put":
+      return "bg-[#f59e0b]";
+    case "patch":
+      return "bg-[#f97316]";
+    case "delete":
+      return "bg-[#ef4444]";
+    default:
+      return "bg-zinc-400";
   }
 }
 
@@ -297,7 +322,13 @@ export async function fetchOpenAPI(url: string): Promise<string> {
     headers: { Accept: "application/json, application/yaml, text/yaml, */*" },
   });
   if (!res.ok) {
-    throw new Error(`Failed to fetch OpenAPI (${res.status} ${res.statusText})`);
+    throw new Error(
+      `Failed to fetch OpenAPI (${res.status} ${res.statusText})`
+    );
   }
   return res.text();
+}
+
+export function documentToJson(doc: OpenAPIDocument): string {
+  return JSON.stringify(doc, null, 2);
 }

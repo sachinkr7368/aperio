@@ -31,23 +31,23 @@ function SchemaRow({
   const hasChildren =
     !!schema.properties ||
     schema.type === "object" ||
-    (schema.type === "array" && schema.items?.properties);
+    (schema.type === "array" && !!schema.items?.properties);
 
   return (
-    <div className="border-b border-white/5 last:border-0">
+    <div className="border-b border-[var(--border-subtle)] last:border-0">
       <button
         type="button"
         onClick={() => hasChildren && setOpen((v) => !v)}
         className={clsx(
-          "flex w-full items-start gap-2 px-3 py-2.5 text-left text-sm",
+          "flex w-full items-start gap-2 px-3 py-2 text-left text-sm",
           hasChildren ? "cursor-pointer hover:bg-white/[0.03]" : "cursor-default"
         )}
-        style={{ paddingLeft: 12 + depth * 16 }}
+        style={{ paddingLeft: 12 + depth * 14 }}
       >
         {hasChildren ? (
           <ChevronRight
             className={clsx(
-              "mt-0.5 h-3.5 w-3.5 shrink-0 text-zinc-500 transition",
+              "mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--text-dim)] transition",
               open && "rotate-90"
             )}
           />
@@ -56,27 +56,29 @@ function SchemaRow({
         )}
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <code className="font-mono text-[13px] text-cyan-300">{name}</code>
-            <span className="font-mono text-[11px] text-violet-300/80">
+            <code className="font-mono text-[13px] text-[#93c5fd]">{name}</code>
+            <span className="font-mono text-[11px] text-[#a78bfa]">
               {typeLabel(schema)}
             </span>
             {required && (
-              <span className="rounded bg-rose-500/10 px-1.5 py-0.5 text-[10px] font-medium uppercase text-rose-300">
+              <span className="text-[10px] font-medium uppercase text-[#f87171]">
                 required
               </span>
             )}
             {schema.format && (
-              <span className="text-[11px] text-zinc-500">{schema.format}</span>
+              <span className="text-[11px] text-[var(--text-dim)]">
+                {schema.format}
+              </span>
             )}
           </div>
           {schema.description && (
-            <p className="mt-0.5 text-xs leading-relaxed text-zinc-500">
+            <p className="mt-0.5 text-xs leading-relaxed text-[var(--text-dim)]">
               {schema.description}
             </p>
           )}
           {schema.enum && (
-            <p className="mt-1 font-mono text-[11px] text-zinc-400">
-              enum: {schema.enum.map(String).join(" | ")}
+            <p className="mt-1 font-mono text-[11px] text-[var(--text-muted)]">
+              {schema.enum.map(String).join(" · ")}
             </p>
           )}
         </div>
@@ -120,14 +122,14 @@ export function SchemaView({
 }) {
   if (!schema) {
     return (
-      <p className="text-sm text-zinc-500">No schema defined for this content.</p>
+      <p className="text-sm text-[var(--text-dim)]">No schema defined.</p>
     );
   }
 
   if (schema.properties) {
     return (
-      <div className="overflow-hidden rounded-xl border border-white/10 bg-[#0c0e18]">
-        <div className="border-b border-white/5 px-3 py-2 text-xs font-medium uppercase tracking-wider text-zinc-500">
+      <div className="overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-input)]">
+        <div className="border-b border-[var(--border-subtle)] px-3 py-2 text-[11px] font-medium uppercase tracking-wider text-[var(--text-dim)]">
           {title}
         </div>
         {Object.entries(schema.properties).map(([key, prop]) => (
@@ -143,10 +145,10 @@ export function SchemaView({
   }
 
   return (
-    <div className="rounded-xl border border-white/10 bg-[#0c0e18] px-3 py-3 text-sm">
-      <code className="text-violet-300">{typeLabel(schema)}</code>
+    <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-input)] px-3 py-3 text-sm">
+      <code className="text-[#a78bfa]">{typeLabel(schema)}</code>
       {schema.description && (
-        <p className="mt-1 text-xs text-zinc-500">{schema.description}</p>
+        <p className="mt-1 text-xs text-[var(--text-dim)]">{schema.description}</p>
       )}
     </div>
   );

@@ -10,11 +10,11 @@ export const metadata: Metadata = {
 
 export default function PlaygroundPage() {
   return (
-    <>
-      <Header />
-      <main className="flex-1">
+    <div className="flex min-h-screen flex-col">
+      <Header fullWidth />
+      <main className="flex min-h-0 flex-1 flex-col">
         <PlaygroundClient />
       </main>
-    </>
+    </div>
   );
 }

@@ -63,7 +63,6 @@ export function PlaygroundClient({
     setLoading(true);
     setError(null);
     try {
-      // Prefer same-origin proxy to reduce CORS issues
       const proxy = `/api/fetch-spec?url=${encodeURIComponent(url.trim())}`;
       const res = await fetch(proxy);
       const data = await res.json();
@@ -95,14 +94,14 @@ export function PlaygroundClient({
 
   if (doc) {
     return (
-      <div className="flex min-h-screen flex-col">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-[#0a0b14] px-4 py-2.5">
+      <div className="flex h-[calc(100vh-3.5rem)] flex-col overflow-hidden">
+        <div className="flex h-10 shrink-0 flex-wrap items-center justify-between gap-2 border-b border-[var(--border)] bg-[var(--bg-elevated)] px-4">
           <div className="min-w-0">
             <p className="truncate text-sm font-medium text-white">
               {doc.info.title}
-            </p>
-            <p className="text-xs text-zinc-500">
-              v{doc.info.version} · Interactive reference
+              <span className="ml-2 font-normal text-[var(--text-dim)]">
+                v{doc.info.version}
+              </span>
             </p>
           </div>
           <button
@@ -111,12 +110,14 @@ export function PlaygroundClient({
               setDoc(null);
               setError(null);
             }}
-            className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-zinc-300 hover:bg-white/5"
+            className="rounded-md border border-[var(--border)] px-2.5 py-1 text-xs font-medium text-[var(--text-muted)] hover:bg-white/5 hover:text-white"
           >
             Load another spec
           </button>
         </div>
-        <ApiReference doc={doc} />
+        <div className="min-h-0 flex-1 overflow-hidden">
+          <ApiReference doc={doc} />
+        </div>
       </div>
     );
   }
@@ -127,12 +128,12 @@ export function PlaygroundClient({
         <h1 className="text-3xl font-semibold tracking-tight text-white">
           Playground
         </h1>
-        <p className="mt-2 text-sm text-zinc-500">
+        <p className="mt-2 text-sm text-[var(--text-dim)]">
           Load any OpenAPI or Swagger document — free, no account needed.
         </p>
       </div>
 
-      <div className="mb-4 flex flex-wrap gap-1 rounded-xl border border-white/10 bg-white/[0.02] p-1">
+      <div className="mb-3 flex flex-wrap gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-1">
         {(
           [
             ["paste", "Paste"],
@@ -145,10 +146,10 @@ export function PlaygroundClient({
             type="button"
             onClick={() => setMode(id)}
             className={clsx(
-              "flex-1 rounded-lg px-3 py-2 text-sm font-medium transition",
+              "flex-1 rounded-md px-3 py-2 text-sm font-medium transition",
               mode === id
-                ? "bg-white/10 text-white"
-                : "text-zinc-500 hover:text-zinc-300"
+                ? "bg-[#2563eb] text-white"
+                : "text-[var(--text-dim)] hover:text-zinc-300"
             )}
           >
             {label}
@@ -156,7 +157,7 @@ export function PlaygroundClient({
         ))}
       </div>
 
-      <div className="rounded-2xl border border-white/10 bg-[#0c0e18] p-5">
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5">
         {mode === "paste" && (
           <>
             <textarea
@@ -165,12 +166,12 @@ export function PlaygroundClient({
               rows={14}
               spellCheck={false}
               placeholder={`{\n  "openapi": "3.0.3",\n  "info": { "title": "My API", "version": "1.0.0" },\n  "paths": { ... }\n}`}
-              className="w-full resize-y rounded-xl border border-white/10 bg-[#07080f] p-3 font-mono text-[12px] leading-relaxed text-zinc-200 outline-none placeholder:text-zinc-600 focus:border-cyan-500/40"
+              className="w-full resize-y rounded-lg border border-[var(--border)] bg-[var(--bg-input)] p-3 font-mono text-[12px] leading-relaxed text-zinc-200 outline-none placeholder:text-[var(--text-dim)] focus:border-[#2563eb]"
             />
             <button
               type="button"
               onClick={() => loadText(raw)}
-              className="mt-3 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-violet-500 px-5 py-2.5 text-sm font-semibold text-white"
+              className="mt-3 inline-flex items-center gap-2 rounded-md bg-[#2563eb] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#1d4ed8]"
             >
               <Sparkles className="h-4 w-4" />
               Render docs
@@ -180,33 +181,29 @@ export function PlaygroundClient({
 
         {mode === "url" && (
           <>
-            <label className="block text-xs font-medium uppercase tracking-wider text-zinc-500">
+            <label className="block text-xs font-medium uppercase tracking-wider text-[var(--text-dim)]">
               OpenAPI URL
             </label>
             <div className="mt-2 flex gap-2">
               <div className="relative flex-1">
-                <Link2 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                <Link2 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-dim)]" />
                 <input
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder="https://example.com/openapi.json"
-                  className="w-full rounded-xl border border-white/10 bg-[#07080f] py-2.5 pl-10 pr-3 text-sm text-zinc-200 outline-none focus:border-cyan-500/40"
+                  className="w-full rounded-md border border-[var(--border)] bg-[var(--bg-input)] py-2.5 pl-10 pr-3 text-sm text-zinc-200 outline-none focus:border-[#2563eb]"
                 />
               </div>
               <button
                 type="button"
                 onClick={loadFromUrl}
                 disabled={loading}
-                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-violet-500 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
+                className="inline-flex items-center gap-2 rounded-md bg-[#2563eb] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#1d4ed8] disabled:opacity-60"
               >
-                {loading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  "Fetch"
-                )}
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Fetch"}
               </button>
             </div>
-            <p className="mt-2 text-xs text-zinc-600">
+            <p className="mt-2 text-xs text-[var(--text-dim)]">
               Fetches through Aperio&apos;s proxy when possible to avoid CORS
               issues.
             </p>
@@ -214,12 +211,12 @@ export function PlaygroundClient({
         )}
 
         {mode === "file" && (
-          <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-white/15 bg-[#07080f] px-6 py-14 transition hover:border-cyan-500/40 hover:bg-cyan-500/5">
-            <FileUp className="h-8 w-8 text-zinc-500" />
+          <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-[var(--border)] bg-[var(--bg-input)] px-6 py-14 transition hover:border-[#2563eb]/50">
+            <FileUp className="h-8 w-8 text-[var(--text-dim)]" />
             <span className="mt-3 text-sm font-medium text-zinc-300">
               Drop OpenAPI JSON or YAML
             </span>
-            <span className="mt-1 text-xs text-zinc-600">
+            <span className="mt-1 text-xs text-[var(--text-dim)]">
               or click to browse
             </span>
             <input
@@ -232,7 +229,7 @@ export function PlaygroundClient({
         )}
 
         {error && (
-          <div className="mt-4 flex items-start gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-3 text-sm text-rose-200">
+          <div className="mt-4 flex items-start gap-2 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-3 text-sm text-red-200">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
             {error}
           </div>
@@ -244,7 +241,7 @@ export function PlaygroundClient({
           type="button"
           onClick={loadSample}
           disabled={loading}
-          className="text-sm text-cyan-400 hover:text-cyan-300"
+          className="text-sm text-[#60a5fa] hover:underline"
         >
           {loading ? "Loading…" : "Or try the Petstore sample →"}
         </button>

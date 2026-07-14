@@ -17,9 +17,11 @@ export default async function DemoPage() {
   const doc = parseOpenAPI(raw);
 
   return (
-    <>
-      <Header />
-      <DemoClient doc={doc} />
-    </>
+    <div className="flex h-screen flex-col overflow-hidden">
+      <Header fullWidth />
+      <div className="min-h-0 flex-1">
+        <DemoClient doc={doc} />
+      </div>
+    </div>
   );
 }

@@ -45,7 +45,7 @@ export default function DocsPage() {
               </nav>
               <Link
                 href="/playground"
-                className="mt-6 block rounded-xl bg-gradient-to-r from-cyan-500 to-violet-500 px-3 py-2 text-center text-sm font-semibold text-white"
+                className="mt-6 block rounded-md bg-[#2563eb] px-3 py-2 text-center text-sm font-semibold text-white hover:bg-[#1d4ed8]"
               >
                 Open playground
               </Link>
@@ -53,7 +53,7 @@ export default function DocsPage() {
           </aside>
 
           <article className="prose-docs min-w-0 max-w-3xl">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-cyan-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[#60a5fa]">
               Documentation
             </p>
             <h1 className="mb-4 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
@@ -233,7 +233,7 @@ npm start`}</code>
               auth still applies on the wire.
             </p>
 
-            <div className="mt-12 rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-6">
+            <div className="mt-12 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-6">
               <h3 className="!mt-0 text-lg text-white">Need help?</h3>
               <p className="!mb-0">
                 Open an issue on{" "}
