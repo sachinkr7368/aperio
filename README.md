@@ -6,8 +6,20 @@ Not a paid seat-based portal. You own the OpenAPI file; publish via **playground
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
+[![GitHub stars](https://img.shields.io/github/stars/sachinkr7368/aperio?style=social)](https://github.com/sachinkr7368/aperio/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/sachinkr7368/aperio?style=social)](https://github.com/sachinkr7368/aperio/network/members)
 
 **Live demo:** [https://aperio-nine.vercel.app](https://aperio-nine.vercel.app)
+
+## Repo activity
+
+<!-- Star history graph (public). Updates as people star the repo. -->
+[![Star History Chart](https://api.star-history.com/svg?repos=sachinkr7368/aperio&type=Date)](https://star-history.com/#sachinkr7368/aperio&Date)
+
+> **Website unique visitors:** enable free **Vercel Web Analytics** for this project  
+> (Vercel Dashboard → Project **aperio** → **Analytics** → Enable).  
+> After deploy with `@vercel/analytics`, open that tab for pageviews & visitors.  
+> GitHub cannot show live unique visitors for the Vercel site inside the README.
 
 ## Why Aperio?
 
