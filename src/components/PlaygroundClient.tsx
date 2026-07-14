@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { parseOpenAPI } from "@/lib/openapi/parse";
 import type { OpenAPIDocument } from "@/lib/openapi/types";
 import { ApiReference } from "@/components/api-reference/ApiReference";
@@ -16,8 +16,15 @@ import {
 import { clsx } from "clsx";
 
 const SAMPLE_URL = "/samples/petstore.json";
+const RECENT_KEY = "aperio.recentSpecs";
 
 type Mode = "paste" | "url" | "file" | "edit";
+
+interface RecentSpec {
+  title: string;
+  at: number;
+  preview: string;
+}
 
 export function PlaygroundClient({
   initialDoc,
@@ -30,6 +37,16 @@ export function PlaygroundClient({
   const [url, setUrl] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [recent, setRecent] = useState<RecentSpec[]>([]);
+
+  useEffect(() => {
+    try {
+      const r = localStorage.getItem(RECENT_KEY);
+      if (r) setRecent(JSON.parse(r));
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   const loadText = useCallback((text: string) => {
     try {
@@ -37,6 +54,24 @@ export function PlaygroundClient({
       setDoc(parsed);
       setRaw(text);
       setError(null);
+      try {
+        const entry: RecentSpec = {
+          title: parsed.info.title,
+          at: Date.now(),
+          preview: text.slice(0, 8000),
+        };
+        const prev: RecentSpec[] = JSON.parse(
+          localStorage.getItem(RECENT_KEY) || "[]"
+        );
+        const next = [
+          entry,
+          ...prev.filter((p) => p.title !== entry.title),
+        ].slice(0, 5);
+        localStorage.setItem(RECENT_KEY, JSON.stringify(next));
+        setRecent(next);
+      } catch {
+        /* ignore */
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to parse document");
       setDoc(null);
@@ -48,8 +83,7 @@ export function PlaygroundClient({
     setError(null);
     try {
       const res = await fetch(SAMPLE_URL);
-      const text = await res.text();
-      loadText(text);
+      loadText(await res.text());
     } catch {
       setError("Could not load sample document.");
     } finally {
@@ -84,9 +118,7 @@ export function PlaygroundClient({
   function onFile(file: File | null) {
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => {
-      loadText(String(reader.result ?? ""));
-    };
+    reader.onload = () => loadText(String(reader.result ?? ""));
     reader.onerror = () => setError("Could not read file.");
     reader.readAsText(file);
   }
@@ -95,14 +127,12 @@ export function PlaygroundClient({
     return (
       <div className="flex h-[calc(100vh-3.5rem)] flex-col overflow-hidden">
         <div className="flex h-10 shrink-0 flex-wrap items-center justify-between gap-2 border-b border-[var(--border)] bg-[var(--bg-elevated)] px-4">
-          <div className="min-w-0">
-            <p className="truncate text-sm font-medium">
-              {doc.info.title}
-              <span className="ml-2 font-normal text-[var(--text-dim)]">
-                v{doc.info.version}
-              </span>
-            </p>
-          </div>
+          <p className="truncate text-sm font-medium">
+            {doc.info.title}
+            <span className="ml-2 font-normal text-[var(--text-dim)]">
+              v{doc.info.version}
+            </span>
+          </p>
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -138,16 +168,16 @@ export function PlaygroundClient({
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
       <div className="mb-8 text-center">
-        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[#2563eb]/15 text-[#2563eb]">
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--accent-soft)] text-[var(--accent)]">
           <IconFileJson size={24} />
         </div>
         <h1 className="text-3xl font-semibold tracking-tight">Playground</h1>
         <p className="mt-2 text-sm text-[var(--text-dim)]">
-          Load any OpenAPI or Swagger document — free, no account needed.
+          Import any OpenAPI or Swagger document — free, no account needed.
         </p>
       </div>
 
-      <div className="mb-3 flex flex-wrap gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-1">
+      <div className="mb-3 flex flex-wrap gap-1 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-1">
         {(
           [
             ["paste", "Paste", IconFileJson],
@@ -161,9 +191,9 @@ export function PlaygroundClient({
             type="button"
             onClick={() => setMode(id)}
             className={clsx(
-              "flex flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-2 text-sm font-medium transition",
+              "flex flex-1 items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-sm font-medium transition",
               mode === id
-                ? "bg-[#2563eb] text-white"
+                ? "bg-[var(--accent)] text-white"
                 : "text-[var(--text-dim)] hover:text-[var(--text)]"
             )}
           >
@@ -173,7 +203,7 @@ export function PlaygroundClient({
         ))}
       </div>
 
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5">
+      <div className="surface p-5">
         {(mode === "paste" || mode === "edit") && (
           <>
             <textarea
@@ -182,12 +212,12 @@ export function PlaygroundClient({
               rows={mode === "edit" ? 18 : 14}
               spellCheck={false}
               placeholder={`{\n  "openapi": "3.0.3",\n  "info": { "title": "My API", "version": "1.0.0" },\n  "paths": { ... }\n}`}
-              className="w-full resize-y rounded-lg border border-[var(--border)] bg-[var(--bg-input)] p-3 font-mono text-[12px] leading-relaxed outline-none placeholder:text-[var(--text-dim)] focus:border-[#2563eb]"
+              className="input-field resize-y font-mono text-[12px] leading-relaxed"
             />
             <button
               type="button"
               onClick={() => loadText(raw)}
-              className="mt-3 inline-flex items-center gap-2 rounded-md bg-[#2563eb] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#1d4ed8]"
+              className="btn-primary mt-3"
             >
               <IconSpark size={16} />
               Render docs
@@ -210,14 +240,14 @@ export function PlaygroundClient({
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder="https://example.com/openapi.json"
-                  className="w-full rounded-md border border-[var(--border)] bg-[var(--bg-input)] py-2.5 pl-10 pr-3 text-sm outline-none focus:border-[#2563eb]"
+                  className="input-field pl-10"
                 />
               </div>
               <button
                 type="button"
                 onClick={loadFromUrl}
                 disabled={loading}
-                className="inline-flex items-center gap-2 rounded-md bg-[#2563eb] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#1d4ed8] disabled:opacity-60"
+                className="btn-primary"
               >
                 {loading ? (
                   <IconRefresh size={16} className="aperio-spin" />
@@ -227,14 +257,13 @@ export function PlaygroundClient({
               </button>
             </div>
             <p className="mt-2 text-xs text-[var(--text-dim)]">
-              Fetches through Aperio&apos;s proxy when possible to avoid CORS
-              issues.
+              Fetches through Aperio&apos;s secure proxy to reduce CORS issues.
             </p>
           </>
         )}
 
         {mode === "file" && (
-          <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-[var(--border)] bg-[var(--bg-input)] px-6 py-14 transition hover:border-[#2563eb]/50">
+          <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-[var(--border)] bg-[var(--bg-input)] px-6 py-14 transition hover:border-[var(--accent)]/50">
             <IconUpload size={32} className="text-[var(--text-dim)]" />
             <span className="mt-3 text-sm font-medium">
               Drop OpenAPI JSON or YAML
@@ -252,12 +281,36 @@ export function PlaygroundClient({
         )}
 
         {error && (
-          <div className="mt-4 flex items-start gap-2 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-3 text-sm text-red-400">
+          <div className="mt-4 flex items-start gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-3 text-sm text-red-400">
             <IconAlert size={16} className="mt-0.5 shrink-0" />
             {error}
           </div>
         )}
       </div>
+
+      {recent.length > 0 && (
+        <div className="mt-8">
+          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-[var(--text-dim)]">
+            Recent (this browser)
+          </h2>
+          <ul className="space-y-2">
+            {recent.map((r) => (
+              <li key={r.at}>
+                <button
+                  type="button"
+                  onClick={() => loadText(r.preview)}
+                  className="flex w-full items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5 text-left text-sm transition hover:border-[var(--accent)]/40"
+                >
+                  <span className="font-medium">{r.title}</span>
+                  <span className="text-xs text-[var(--text-dim)]">
+                    {new Date(r.at).toLocaleDateString()}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="mt-6 text-center">
         <button

@@ -23,9 +23,7 @@ const HTTP_METHODS: HttpMethod[] = [
 
 export function parseOpenAPI(input: string): OpenAPIDocument {
   const trimmed = input.trim();
-  if (!trimmed) {
-    throw new Error("OpenAPI document is empty.");
-  }
+  if (!trimmed) throw new Error("OpenAPI document is empty.");
 
   let raw: unknown;
   try {
@@ -60,7 +58,6 @@ export function resolveRefs<T>(
   seen = new Set<string>()
 ): T {
   if (node === null || typeof node !== "object") return node;
-
   if (Array.isArray(node)) {
     return node.map((item) => resolveRefs(item, root, seen)) as T;
   }
@@ -121,14 +118,7 @@ export function listOperations(doc: OpenAPIDocument): ResolvedOperation[] {
         operation.operationId ||
         `${method}-${path}`.replace(/[^a-zA-Z0-9_-]/g, "-");
 
-      ops.push({
-        id,
-        method,
-        path,
-        operation,
-        parameters,
-        tags,
-      });
+      ops.push({ id, method, path, operation, parameters, tags });
     }
   }
 
@@ -172,18 +162,14 @@ export function groupByTag(doc: OpenAPIDocument): TagGroup[] {
   }
 
   for (const [name, operations] of groups) {
-    ordered.push({
-      name,
-      description: tagMeta.get(name),
-      operations,
-    });
+    ordered.push({ name, description: tagMeta.get(name), operations });
   }
 
   return ordered;
 }
 
 export function schemaExample(schema?: OpenAPISchema, depth = 0): unknown {
-  if (!schema || depth > 6) return null;
+  if (!schema || depth > 8) return null;
   if (schema.example !== undefined) return schema.example;
   if (schema.default !== undefined) return schema.default;
   if (schema.enum?.length) return schema.enum[0];
@@ -209,7 +195,17 @@ export function schemaExample(schema?: OpenAPISchema, depth = 0): unknown {
     case "object": {
       const obj: Record<string, unknown> = {};
       for (const [key, prop] of Object.entries(schema.properties ?? {})) {
+        if (prop.writeOnly) continue;
         obj[key] = schemaExample(prop, depth + 1);
+      }
+      if (
+        schema.additionalProperties &&
+        typeof schema.additionalProperties === "object"
+      ) {
+        obj["additionalProp"] = schemaExample(
+          schema.additionalProperties,
+          depth + 1
+        );
       }
       return obj;
     }
@@ -228,6 +224,9 @@ export function schemaExample(schema?: OpenAPISchema, depth = 0): unknown {
         return "00000000-0000-0000-0000-000000000000";
       if (schema.format === "uri" || schema.format === "url")
         return "https://example.com";
+      if (schema.format === "password") return "********";
+      if (schema.format === "binary") return "<binary>";
+      if (schema.pattern) return "string";
       return schema.title || "string";
     default:
       if (schema.properties) {
@@ -241,10 +240,14 @@ export function schemaExample(schema?: OpenAPISchema, depth = 0): unknown {
   }
 }
 
-export function getRequestBodyExample(operation: OpenAPIOperation): string {
+export function getRequestBodyExample(
+  operation: OpenAPIOperation,
+  contentType?: string
+): string {
   const content = operation.requestBody?.content;
   if (!content) return "";
   const json =
+    (contentType && content[contentType]) ||
     content["application/json"] ||
     content["application/*+json"] ||
     Object.values(content)[0];
@@ -281,6 +284,40 @@ export function getResponseExample(
   return "";
 }
 
+export function listBodyExamples(
+  operation: OpenAPIOperation,
+  contentType?: string
+): { name: string; value: string }[] {
+  const content = operation.requestBody?.content;
+  if (!content) return [];
+  const media =
+    (contentType && content[contentType]) ||
+    content["application/json"] ||
+    Object.values(content)[0];
+  if (!media) return [];
+  const out: { name: string; value: string }[] = [];
+  if (media.examples) {
+    for (const [name, ex] of Object.entries(media.examples)) {
+      if (ex?.value !== undefined) {
+        out.push({ name, value: JSON.stringify(ex.value, null, 2) });
+      }
+    }
+  }
+  if (media.example !== undefined) {
+    out.unshift({
+      name: "default",
+      value: JSON.stringify(media.example, null, 2),
+    });
+  }
+  if (!out.length && media.schema) {
+    out.push({
+      name: "generated",
+      value: JSON.stringify(schemaExample(media.schema), null, 2),
+    });
+  }
+  return out;
+}
+
 export function methodColor(method: string): string {
   const m = method.toLowerCase();
   switch (m) {
@@ -289,7 +326,7 @@ export function methodColor(method: string): string {
     case "post":
       return "text-[#3b82f6] bg-[#3b82f6]/10 border-[#3b82f6]/25";
     case "put":
-      return "text-[#f59e0b] bg-[#f59e0b]/10 border-[#f59e0b]/25";
+      return "text-[#eab308] bg-[#eab308]/10 border-[#eab308]/25";
     case "patch":
       return "text-[#f97316] bg-[#f97316]/10 border-[#f97316]/25";
     case "delete":
@@ -307,7 +344,7 @@ export function methodDot(method: string): string {
     case "post":
       return "bg-[#3b82f6]";
     case "put":
-      return "bg-[#f59e0b]";
+      return "bg-[#eab308]";
     case "patch":
       return "bg-[#f97316]";
     case "delete":
@@ -317,18 +354,10 @@ export function methodDot(method: string): string {
   }
 }
 
-export async function fetchOpenAPI(url: string): Promise<string> {
-  const res = await fetch(url, {
-    headers: { Accept: "application/json, application/yaml, text/yaml, */*" },
-  });
-  if (!res.ok) {
-    throw new Error(
-      `Failed to fetch OpenAPI (${res.status} ${res.statusText})`
-    );
-  }
-  return res.text();
-}
-
 export function documentToJson(doc: OpenAPIDocument): string {
   return JSON.stringify(doc, null, 2);
+}
+
+export function operationAnchor(op: ResolvedOperation): string {
+  return op.id;
 }

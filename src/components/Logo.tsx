@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { clsx } from "clsx";
 
-/** Premium A mark with depth + accent spark */
 export function LogoMark({ className }: { className?: string }) {
   return (
     <svg
@@ -11,22 +10,20 @@ export function LogoMark({ className }: { className?: string }) {
       className={clsx("shrink-0", className)}
       aria-hidden
     >
-      <rect width="40" height="40" rx="10" fill="#1e3a8a" />
-      <rect x="1.25" y="1.25" width="37.5" height="37.5" rx="8.75" fill="#2563eb" />
+      <rect width="40" height="40" rx="11" fill="#1d4ed8" />
+      <rect x="1" y="1" width="38" height="38" rx="10" fill="#2563eb" />
+      {/* Stylized open aperture / document mark */}
       <path
-        d="M11 28 L20 10 L29 28"
-        stroke="white"
-        strokeWidth="3.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        d="M12 26.5V13.5h6.1c2.85 0 4.55 1.45 4.55 3.65 0 1.55-.85 2.7-2.25 3.25L24.2 26.5h-3.35l-3.35-5.55H15.2v5.55H12zm3.2-8h1.95c1.25 0 2-.65 2-1.7s-.75-1.65-2-1.65H15.2v3.35z"
+        fill="white"
       />
+      <circle cx="28.5" cy="14" r="3" fill="#93c5fd" />
       <path
-        d="M14.5 21 H25.5"
-        stroke="white"
-        strokeWidth="3.2"
+        d="M27 14h3M28.5 12.5v3"
+        stroke="#1d4ed8"
+        strokeWidth="1.2"
         strokeLinecap="round"
       />
-      <circle cx="30" cy="12" r="3.2" fill="#93c5fd" />
     </svg>
   );
 }
@@ -35,11 +32,17 @@ export function Logo({
   className,
   href = "/",
   showWordmark = true,
+  size = "md",
 }: {
   className?: string;
   href?: string;
   showWordmark?: boolean;
+  size?: "sm" | "md" | "lg";
 }) {
+  const mark = size === "lg" ? "h-9 w-9" : size === "sm" ? "h-6 w-6" : "h-7 w-7";
+  const text =
+    size === "lg" ? "text-xl" : size === "sm" ? "text-sm" : "text-[15px]";
+
   return (
     <Link
       href={href}
@@ -48,9 +51,9 @@ export function Logo({
         className
       )}
     >
-      <LogoMark className="h-7 w-7" />
+      <LogoMark className={mark} />
       {showWordmark && (
-        <span className="text-[15px] tracking-tight">
+        <span className={clsx(text, "tracking-[-0.02em]")}>
           Aperio
         </span>
       )}

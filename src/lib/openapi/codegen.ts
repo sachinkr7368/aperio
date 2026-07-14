@@ -381,6 +381,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }`;
 }
 
-export function defaultBody(op: ResolvedOperation): string {
-  return getRequestBodyExample(op.operation);
+export function defaultBody(op: ResolvedOperation, contentType?: string): string {
+  return getRequestBodyExample(op.operation, contentType);
 }

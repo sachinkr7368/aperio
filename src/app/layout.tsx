@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Providers } from "@/components/Providers";
 import "./globals.css";
@@ -15,24 +15,35 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Aperio — Free Open-Source API Documentation",
+    default: "Aperio — Beautiful free API documentation",
     template: "%s · Aperio",
   },
   description:
-    "Aperio is a free, open-source API documentation platform. Drop in any OpenAPI or Swagger file and get beautiful interactive docs with try-it-out, code samples, and zero authentication.",
+    "Aperio is a free, open-source API documentation platform. Interactive OpenAPI references, request client, multi-language code samples, models, and environments — no signup required.",
+  applicationName: "Aperio",
   keywords: [
     "OpenAPI",
     "Swagger",
     "API documentation",
     "API reference",
+    "API client",
     "open source",
     "Aperio",
+    "free API docs",
   ],
+  authors: [{ name: "Aperio" }],
   openGraph: {
-    title: "Aperio — Free Open-Source API Documentation",
+    title: "Aperio — Beautiful free API documentation",
     description:
-      "Beautiful interactive API docs from OpenAPI. Free forever. No signup.",
+      "Interactive API docs from OpenAPI. Free forever. No signup. Open source.",
     type: "website",
+    siteName: "Aperio",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Aperio — Beautiful free API documentation",
+    description:
+      "Interactive API docs from OpenAPI. Free forever. No signup.",
   },
   icons: {
     icon: [
@@ -43,6 +54,15 @@ export const metadata: Metadata = {
     shortcut: "/favicon.svg",
   },
   manifest: "/site.webmanifest",
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
+    { media: "(prefers-color-scheme: light)", color: "#fafafa" },
+  ],
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({

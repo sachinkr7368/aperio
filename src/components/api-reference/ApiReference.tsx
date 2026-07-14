@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   documentToJson,
   groupByTag,
@@ -14,6 +14,7 @@ import type {
 import { MethodBadge } from "./MethodBadge";
 import { OperationDetail } from "./OperationDetail";
 import { SchemaView } from "./SchemaView";
+import { CommandPalette } from "./CommandPalette";
 import { Markdown } from "@/components/Markdown";
 import { clsx } from "clsx";
 import {
@@ -23,6 +24,7 @@ import {
   IconDownload,
   IconExternal,
   IconFilter,
+  IconLayers,
   IconMenu,
   IconSearch,
   IconShield,
@@ -32,6 +34,7 @@ import { dump as yamlDump } from "js-yaml";
 
 type SidebarView = "endpoints" | "models" | "security";
 type MethodFilter = "all" | string;
+type LayoutMode = "focused" | "classic";
 
 export function ApiReference({ doc }: { doc: OpenAPIDocument }) {
   const groups = useMemo(() => groupByTag(doc), [doc]);
@@ -61,13 +64,14 @@ export function ApiReference({ doc }: { doc: OpenAPIDocument }) {
   const [methodFilter, setMethodFilter] = useState<MethodFilter>("all");
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const [exportOpen, setExportOpen] = useState(false);
+  const [cmdOpen, setCmdOpen] = useState(false);
+  const [layout, setLayout] = useState<LayoutMode>("focused");
 
   const active: ResolvedOperation | undefined =
     allOps.find((o) => o.id === activeId) || allOps[0];
 
   const methodsInDoc = useMemo(() => {
-    const set = new Set(allOps.map((o) => o.method));
-    return Array.from(set);
+    return Array.from(new Set(allOps.map((o) => o.method)));
   }, [allOps]);
 
   const filtered = useMemo(() => {
@@ -97,18 +101,41 @@ export function ApiReference({ doc }: { doc: OpenAPIDocument }) {
     return models.filter(([name]) => name.toLowerCase().includes(q));
   }, [models, query]);
 
+  const selectOp = useCallback((id: string) => {
+    setActiveId(id);
+    setActiveModel(null);
+    setShowOverview(false);
+    setSidebarOpen(false);
+    if (typeof window !== "undefined") {
+      history.replaceState(null, "", `#${id}`);
+    }
+  }, []);
+
   useEffect(() => {
     if (allOps[0]) setActiveId(allOps[0].id);
     setActiveModel(null);
     setShowOverview(true);
   }, [doc]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  function selectOp(id: string) {
-    setActiveId(id);
-    setActiveModel(null);
-    setShowOverview(false);
-    setSidebarOpen(false);
-  }
+  // Deep link on load
+  useEffect(() => {
+    const hash = typeof window !== "undefined" ? window.location.hash.slice(1) : "";
+    if (hash && allOps.some((o) => o.id === hash)) {
+      selectOp(hash);
+    }
+  }, [allOps, selectOp]);
+
+  // Cmd/Ctrl+K
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setCmdOpen(true);
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   function selectModel(name: string) {
     setActiveModel(name);
@@ -119,7 +146,9 @@ export function ApiReference({ doc }: { doc: OpenAPIDocument }) {
   function download(format: "json" | "yaml") {
     const json = documentToJson(doc);
     const content =
-      format === "json" ? json : yamlDump(JSON.parse(json), { lineWidth: 100 });
+      format === "json"
+        ? json
+        : yamlDump(JSON.parse(json), { lineWidth: 100 });
     const blob = new Blob([content], {
       type: format === "json" ? "application/json" : "text/yaml",
     });
@@ -142,10 +171,17 @@ export function ApiReference({ doc }: { doc: OpenAPIDocument }) {
 
   return (
     <div className="flex h-full min-h-[480px] bg-[var(--bg)] text-[var(--text)]">
+      <CommandPalette
+        open={cmdOpen}
+        onClose={() => setCmdOpen(false)}
+        operations={allOps}
+        onSelect={selectOp}
+      />
+
       <button
         type="button"
         onClick={() => setSidebarOpen(true)}
-        className="fixed bottom-5 left-5 z-40 flex h-11 w-11 items-center justify-center rounded-full bg-[#2563eb] text-white shadow-lg lg:hidden"
+        className="fixed bottom-5 left-5 z-40 flex h-11 w-11 items-center justify-center rounded-full bg-[var(--accent)] text-white shadow-lg lg:hidden"
         aria-label="Open navigation"
       >
         <IconMenu size={20} />
@@ -174,7 +210,9 @@ export function ApiReference({ doc }: { doc: OpenAPIDocument }) {
               }}
               className="min-w-0 text-left"
             >
-              <h1 className="truncate text-sm font-semibold">{doc.info.title}</h1>
+              <h1 className="truncate text-sm font-semibold tracking-tight">
+                {doc.info.title}
+              </h1>
               <p className="mt-0.5 text-xs text-[var(--text-dim)]">
                 v{doc.info.version}
                 {(doc.openapi || doc.swagger) && (
@@ -189,23 +227,23 @@ export function ApiReference({ doc }: { doc: OpenAPIDocument }) {
                 type="button"
                 onClick={() => setExportOpen((v) => !v)}
                 title="Export OpenAPI"
-                className="rounded-md p-1.5 text-[var(--text-dim)] hover:bg-black/5 hover:text-[var(--text)] dark:hover:bg-white/5"
+                className="rounded-md p-1.5 text-[var(--text-dim)] hover:bg-[var(--bg-hover)] hover:text-[var(--text)]"
               >
                 <IconDownload size={16} />
               </button>
               {exportOpen && (
-                <div className="absolute right-0 top-full z-20 mt-1 w-36 overflow-hidden rounded-md border border-[var(--border)] bg-[var(--bg-elevated)] shadow-xl">
+                <div className="absolute right-0 top-full z-20 mt-1 w-36 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] shadow-xl">
                   <button
                     type="button"
                     onClick={() => download("json")}
-                    className="block w-full px-3 py-2 text-left text-xs hover:bg-black/5 dark:hover:bg-white/5"
+                    className="block w-full px-3 py-2 text-left text-xs hover:bg-[var(--bg-hover)]"
                   >
                     Export JSON
                   </button>
                   <button
                     type="button"
                     onClick={() => download("yaml")}
-                    className="block w-full px-3 py-2 text-left text-xs hover:bg-black/5 dark:hover:bg-white/5"
+                    className="block w-full px-3 py-2 text-left text-xs hover:bg-[var(--bg-hover)]"
                   >
                     Export YAML
                   </button>
@@ -221,25 +259,26 @@ export function ApiReference({ doc }: { doc: OpenAPIDocument }) {
             </div>
           </div>
 
-          <div className="mt-3 flex rounded-md border border-[var(--border)] bg-[var(--bg-input)] p-0.5">
+          <div className="mt-3 flex rounded-lg border border-[var(--border)] bg-[var(--bg-input)] p-0.5">
             {(
               [
-                ["endpoints", "API"],
-                ["models", "Models"],
-                ["security", "Auth"],
+                ["endpoints", "API", IconLayers],
+                ["models", "Models", IconBox],
+                ["security", "Auth", IconShield],
               ] as const
-            ).map(([id, label]) => (
+            ).map(([id, label, Icon]) => (
               <button
                 key={id}
                 type="button"
                 onClick={() => setSidebarView(id)}
                 className={clsx(
-                  "flex-1 rounded px-1 py-1.5 text-[11px] font-medium transition",
+                  "flex flex-1 items-center justify-center gap-1 rounded-md px-1 py-1.5 text-[11px] font-medium transition",
                   sidebarView === id
-                    ? "bg-[#2563eb] text-white"
+                    ? "bg-[var(--accent)] text-white"
                     : "text-[var(--text-dim)] hover:text-[var(--text)]"
                 )}
               >
+                <Icon size={12} />
                 {label}
               </button>
             ))}
@@ -247,57 +286,84 @@ export function ApiReference({ doc }: { doc: OpenAPIDocument }) {
         </div>
 
         <div className="space-y-2 border-b border-[var(--border)] p-2.5">
-          <div className="relative">
-            <IconSearch
-              size={14}
-              className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--text-dim)]"
-            />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={
-                sidebarView === "endpoints"
-                  ? "Search endpoints…"
-                  : sidebarView === "models"
-                    ? "Search models…"
-                    : "Search…"
-              }
-              className="w-full rounded-md border border-[var(--border)] bg-[var(--bg-input)] py-2 pl-8 pr-3 text-sm outline-none placeholder:text-[var(--text-dim)] focus:border-[#2563eb]"
-            />
-          </div>
+          <button
+            type="button"
+            onClick={() => setCmdOpen(true)}
+            className="flex w-full items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-input)] px-2.5 py-2 text-left text-sm text-[var(--text-dim)] transition hover:border-[var(--accent)]/40"
+          >
+            <IconSearch size={14} />
+            <span className="flex-1">Search…</span>
+            <kbd className="rounded border border-[var(--border)] px-1.5 py-0.5 text-[10px]">
+              ⌘K
+            </kbd>
+          </button>
 
           {sidebarView === "endpoints" && (
-            <div className="flex items-center gap-1.5">
-              <IconFilter size={12} className="text-[var(--text-dim)]" />
-              <select
-                value={methodFilter}
-                onChange={(e) => setMethodFilter(e.target.value)}
-                className="flex-1 rounded border border-[var(--border)] bg-[var(--bg-input)] px-2 py-1 text-[11px] outline-none"
-              >
-                <option value="all">All methods</option>
-                {methodsInDoc.map((m) => (
-                  <option key={m} value={m}>
-                    {m.toUpperCase()}
-                  </option>
+            <>
+              <div className="relative">
+                <IconSearch
+                  size={14}
+                  className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--text-dim)]"
+                />
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Filter endpoints…"
+                  className="input-field py-2 pl-8 text-sm"
+                />
+              </div>
+              <div className="flex items-center gap-1.5">
+                <IconFilter size={12} className="text-[var(--text-dim)]" />
+                <select
+                  value={methodFilter}
+                  onChange={(e) => setMethodFilter(e.target.value)}
+                  className="flex-1 rounded-md border border-[var(--border)] bg-[var(--bg-input)] px-2 py-1 text-[11px] outline-none"
+                >
+                  <option value="all">All methods</option>
+                  {methodsInDoc.map((m) => (
+                    <option key={m} value={m}>
+                      {m.toUpperCase()}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={() => expandAll(true)}
+                  className="rounded px-1.5 py-1 text-[10px] text-[var(--text-dim)] hover:text-[var(--text)]"
+                >
+                  Expand
+                </button>
+                <button
+                  type="button"
+                  onClick={() => expandAll(false)}
+                  className="rounded px-1.5 py-1 text-[10px] text-[var(--text-dim)] hover:text-[var(--text)]"
+                >
+                  Collapse
+                </button>
+              </div>
+              <div className="flex rounded-md border border-[var(--border)] p-0.5">
+                {(
+                  [
+                    ["focused", "Focused"],
+                    ["classic", "Classic"],
+                  ] as const
+                ).map(([id, label]) => (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => setLayout(id)}
+                    className={clsx(
+                      "flex-1 rounded px-2 py-1 text-[10px] font-medium",
+                      layout === id
+                        ? "bg-[var(--accent-soft)] text-[var(--text)]"
+                        : "text-[var(--text-dim)]"
+                    )}
+                  >
+                    {label}
+                  </button>
                 ))}
-              </select>
-              <button
-                type="button"
-                onClick={() => expandAll(true)}
-                className="rounded px-1.5 py-1 text-[10px] text-[var(--text-dim)] hover:text-[var(--text)]"
-                title="Expand all"
-              >
-                Expand
-              </button>
-              <button
-                type="button"
-                onClick={() => expandAll(false)}
-                className="rounded px-1.5 py-1 text-[10px] text-[var(--text-dim)] hover:text-[var(--text)]"
-                title="Collapse all"
-              >
-                Collapse
-              </button>
-            </div>
+              </div>
+            </>
           )}
         </div>
 
@@ -327,7 +393,7 @@ export function ApiReference({ doc }: { doc: OpenAPIDocument }) {
                         <IconChevronDown size={12} />
                       )}
                       {group.name}
-                      <span className="ml-auto font-normal normal-case">
+                      <span className="ml-auto font-normal normal-case tabular-nums">
                         {group.operations.length}
                       </span>
                     </button>
@@ -339,12 +405,12 @@ export function ApiReference({ doc }: { doc: OpenAPIDocument }) {
                               type="button"
                               onClick={() => selectOp(op.id)}
                               className={clsx(
-                                "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm transition",
+                                "flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm transition",
                                 activeId === op.id &&
                                   !activeModel &&
                                   !showOverview
-                                  ? "bg-[#2563eb]/15 text-[var(--text)]"
-                                  : "text-[var(--text-muted)] hover:bg-black/[0.04] dark:hover:bg-white/[0.04]"
+                                  ? "bg-[var(--accent-soft)] text-[var(--text)]"
+                                  : "text-[var(--text-muted)] hover:bg-[var(--bg-hover)]"
                               )}
                             >
                               <span
@@ -389,10 +455,10 @@ export function ApiReference({ doc }: { doc: OpenAPIDocument }) {
                         type="button"
                         onClick={() => selectModel(name)}
                         className={clsx(
-                          "flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm transition",
+                          "flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm transition",
                           activeModel === name
-                            ? "bg-[#2563eb]/15"
-                            : "text-[var(--text-muted)] hover:bg-black/[0.04] dark:hover:bg-white/[0.04]"
+                            ? "bg-[var(--accent-soft)]"
+                            : "text-[var(--text-muted)] hover:bg-[var(--bg-hover)]"
                         )}
                       >
                         <IconBox size={14} className="text-[var(--text-dim)]" />
@@ -414,36 +480,40 @@ export function ApiReference({ doc }: { doc: OpenAPIDocument }) {
                   No security schemes defined.
                 </p>
               ) : (
-                securitySchemes.map(([name, scheme]) => (
-                  <div
-                    key={name}
-                    className="rounded-lg border border-[var(--border)] p-3"
-                  >
-                    <div className="flex items-center gap-2">
-                      <IconShield size={14} className="text-[#60a5fa]" />
-                      <span className="font-mono text-sm font-medium">
-                        {name}
-                      </span>
-                    </div>
-                    <p className="mt-1 text-xs text-[var(--text-dim)]">
-                      type: {(scheme as { type?: string }).type}
-                      {(scheme as { scheme?: string }).scheme &&
-                        ` · ${(scheme as { scheme?: string }).scheme}`}
-                      {(scheme as { name?: string }).name &&
-                        ` · header: ${(scheme as { name?: string }).name}`}
-                    </p>
-                    {(scheme as { description?: string }).description && (
-                      <p className="mt-1 text-xs text-[var(--text-muted)]">
-                        {(scheme as { description?: string }).description}
+                securitySchemes.map(([name, scheme]) => {
+                  const s = scheme as {
+                    type?: string;
+                    scheme?: string;
+                    name?: string;
+                    description?: string;
+                    bearerFormat?: string;
+                    in?: string;
+                  };
+                  return (
+                    <div
+                      key={name}
+                      className="rounded-lg border border-[var(--border)] p-3"
+                    >
+                      <div className="flex items-center gap-2">
+                        <IconShield size={14} className="text-[#60a5fa]" />
+                        <span className="font-mono text-sm font-medium">
+                          {name}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-xs text-[var(--text-dim)]">
+                        {s.type}
+                        {s.scheme && ` · ${s.scheme}`}
+                        {s.bearerFormat && ` (${s.bearerFormat})`}
+                        {s.name && ` · ${s.in}: ${s.name}`}
                       </p>
-                    )}
-                  </div>
-                ))
-              )}
-              {doc.security && (
-                <p className="px-1 pt-2 text-[11px] text-[var(--text-dim)]">
-                  Global security: {JSON.stringify(doc.security)}
-                </p>
+                      {s.description && (
+                        <p className="mt-1 text-xs text-[var(--text-muted)]">
+                          {s.description}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })
               )}
             </div>
           )}
@@ -477,26 +547,31 @@ export function ApiReference({ doc }: { doc: OpenAPIDocument }) {
             )}
             <div className="mt-6 flex flex-wrap gap-2 text-xs">
               {(doc.openapi || doc.swagger) && (
-                <span className="rounded-md border border-[var(--border)] px-2.5 py-1">
+                <span className="rounded-lg border border-[var(--border)] px-2.5 py-1">
                   OpenAPI {doc.openapi || doc.swagger}
                 </span>
               )}
               {doc.info.license && (
-                <span className="rounded-md border border-[var(--border)] px-2.5 py-1">
+                <span className="rounded-lg border border-[var(--border)] px-2.5 py-1">
                   {doc.info.license.name}
                 </span>
               )}
-              {doc.info.contact?.email && (
-                <span className="rounded-md border border-[var(--border)] px-2.5 py-1">
-                  {doc.info.contact.email}
-                </span>
+              {doc.info.contact?.url && (
+                <a
+                  href={doc.info.contact.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 rounded-lg border border-[var(--border)] px-2.5 py-1 text-[#60a5fa]"
+                >
+                  <IconExternal size={12} /> Contact
+                </a>
               )}
               {doc.externalDocs?.url && (
                 <a
                   href={doc.externalDocs.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1 rounded-md border border-[var(--border)] px-2.5 py-1 text-[#60a5fa] hover:bg-[#2563eb]/10"
+                  className="inline-flex items-center gap-1 rounded-lg border border-[var(--border)] px-2.5 py-1 text-[#60a5fa]"
                 >
                   <IconExternal size={12} />
                   {doc.externalDocs.description || "External docs"}
@@ -504,26 +579,25 @@ export function ApiReference({ doc }: { doc: OpenAPIDocument }) {
               )}
             </div>
             <div className="mt-8 grid max-w-xl gap-3 sm:grid-cols-3">
-              <div className="rounded-lg border border-[var(--border)] p-4">
-                <p className="text-2xl font-semibold">{allOps.length}</p>
-                <p className="text-xs text-[var(--text-dim)]">Endpoints</p>
-              </div>
-              <div className="rounded-lg border border-[var(--border)] p-4">
-                <p className="text-2xl font-semibold">{models.length}</p>
-                <p className="text-xs text-[var(--text-dim)]">Models</p>
-              </div>
-              <div className="rounded-lg border border-[var(--border)] p-4">
-                <p className="text-2xl font-semibold">
-                  {securitySchemes.length}
-                </p>
-                <p className="text-xs text-[var(--text-dim)]">Auth schemes</p>
-              </div>
+              {[
+                [allOps.length, "Endpoints"],
+                [models.length, "Models"],
+                [securitySchemes.length, "Auth schemes"],
+              ].map(([n, label]) => (
+                <div
+                  key={String(label)}
+                  className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4"
+                >
+                  <p className="text-2xl font-semibold tabular-nums">{n}</p>
+                  <p className="text-xs text-[var(--text-dim)]">{label}</p>
+                </div>
+              ))}
             </div>
             {allOps[0] && (
               <button
                 type="button"
                 onClick={() => selectOp(allOps[0].id)}
-                className="mt-8 rounded-md bg-[#2563eb] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#1d4ed8]"
+                className="btn-primary mt-8"
               >
                 Browse endpoints →
               </button>
@@ -532,8 +606,7 @@ export function ApiReference({ doc }: { doc: OpenAPIDocument }) {
         ) : activeModel && doc.components?.schemas?.[activeModel] ? (
           <div className="overflow-y-auto px-5 py-6 sm:px-8">
             <div className="mb-1 flex items-center gap-2 text-xs text-[var(--text-dim)]">
-              <IconBox size={14} />
-              Model
+              <IconBox size={14} /> Model
             </div>
             <h2 className="font-mono text-xl font-semibold">{activeModel}</h2>
             {doc.components.schemas[activeModel].description && (
@@ -546,8 +619,21 @@ export function ApiReference({ doc }: { doc: OpenAPIDocument }) {
               <SchemaView
                 schema={doc.components.schemas[activeModel]}
                 title={activeModel}
+                showExample
               />
             </div>
+          </div>
+        ) : layout === "classic" ? (
+          <div className="flex-1 overflow-y-auto">
+            {allOps.map((op) => (
+              <div
+                key={op.id}
+                id={op.id}
+                className="border-b border-[var(--border)] px-5 py-10 sm:px-8"
+              >
+                <OperationDetail doc={doc} op={op} compact />
+              </div>
+            ))}
           </div>
         ) : active ? (
           <OperationDetail key={active.id} doc={doc} op={active} />

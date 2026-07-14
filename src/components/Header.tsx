@@ -24,7 +24,7 @@ export function Header({ fullWidth = false }: { fullWidth?: boolean }) {
   const { theme, toggleTheme } = useClientStore();
 
   return (
-    <header className="sticky top-0 z-50 h-14 shrink-0 border-b border-[var(--border)] bg-[var(--bg)]/95 backdrop-blur-md">
+    <header className="sticky top-0 z-50 h-14 shrink-0 border-b border-[var(--border)] bg-[var(--bg)]/90 backdrop-blur-xl">
       <div
         className={clsx(
           "flex h-full items-center justify-between px-4 sm:px-5",
@@ -37,7 +37,7 @@ export function Header({ fullWidth = false }: { fullWidth?: boolean }) {
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-md px-3 py-1.5 text-sm text-[var(--text-muted)] transition hover:bg-black/5 hover:text-[var(--text)] dark:hover:bg-white/5"
+              className="rounded-lg px-3 py-1.5 text-sm text-[var(--text-muted)] transition hover:bg-[var(--bg-hover)] hover:text-[var(--text)]"
             >
               {item.label}
             </Link>
@@ -45,21 +45,16 @@ export function Header({ fullWidth = false }: { fullWidth?: boolean }) {
           <button
             type="button"
             onClick={toggleTheme}
-            className="ml-1 rounded-md border border-[var(--border)] p-2 text-[var(--text-muted)] transition hover:text-[var(--text)]"
+            className="ml-1 rounded-lg border border-[var(--border)] p-2 text-[var(--text-muted)] transition hover:text-[var(--text)]"
             aria-label="Toggle theme"
-            title={theme === "dark" ? "Light mode" : "Dark mode"}
           >
-            {theme === "dark" ? (
-              <IconSun size={16} />
-            ) : (
-              <IconMoon size={16} />
-            )}
+            {theme === "dark" ? <IconSun size={16} /> : <IconMoon size={16} />}
           </button>
           <a
             href="https://github.com/sachinkr7368/aperio"
             target="_blank"
             rel="noreferrer"
-            className="ml-1.5 inline-flex items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--bg-panel)] px-3 py-1.5 text-sm text-[var(--text)] transition hover:border-[#2563eb]/50 hover:bg-[#2563eb]/10"
+            className="ml-1.5 inline-flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-panel)] px-3 py-1.5 text-sm font-medium text-[var(--text)] transition hover:border-[var(--accent)]/50 hover:bg-[var(--accent-soft)]"
           >
             <IconGithub size={16} />
             GitHub
@@ -69,14 +64,14 @@ export function Header({ fullWidth = false }: { fullWidth?: boolean }) {
           <button
             type="button"
             onClick={toggleTheme}
-            className="rounded-md p-2 text-[var(--text-muted)]"
+            className="rounded-lg p-2 text-[var(--text-muted)]"
             aria-label="Toggle theme"
           >
             {theme === "dark" ? <IconSun size={18} /> : <IconMoon size={18} />}
           </button>
           <button
             type="button"
-            className="rounded-md p-2 text-[var(--text)]"
+            className="rounded-lg p-2 text-[var(--text)]"
             onClick={() => setOpen((v) => !v)}
             aria-label="Toggle menu"
           >
@@ -96,19 +91,11 @@ export function Header({ fullWidth = false }: { fullWidth?: boolean }) {
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}
-              className="rounded-md px-3 py-2.5 text-sm text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5"
+              className="rounded-lg px-3 py-2.5 text-sm text-[var(--text-muted)] hover:bg-[var(--bg-hover)]"
             >
               {item.label}
             </Link>
           ))}
-          <a
-            href="https://github.com/sachinkr7368/aperio"
-            target="_blank"
-            rel="noreferrer"
-            className="rounded-md px-3 py-2.5 text-sm text-[var(--text-muted)]"
-          >
-            GitHub
-          </a>
         </div>
       </div>
     </header>

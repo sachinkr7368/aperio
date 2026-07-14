@@ -1,22 +1,25 @@
 # Aperio
 
-**Free, open-source API documentation from OpenAPI & Swagger.**
+**Beautiful free API documentation from OpenAPI & Swagger.**
 
-Aperio turns your OpenAPI documents into beautiful interactive API references — with try-it-out requests, multi-language code samples, schema browsers, and search. No accounts. No paywalls. MIT licensed.
+Aperio is an open-source API documentation platform: interactive references, a full request client, multi-language code samples, models, environments, and more — with **no signup required**.
 
-**Live site:** [https://aperio-nine.vercel.app](https://aperio-nine.vercel.app)
+**Live:** [https://aperio-nine.vercel.app](https://aperio-nine.vercel.app)
 
-![Aperio](https://img.shields.io/badge/license-MIT-blue) ![Next.js](https://img.shields.io/badge/Next.js-16-black) ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6)
+![license](https://img.shields.io/badge/license-MIT-blue) ![Next.js](https://img.shields.io/badge/Next.js-16-black)
 
 ## Features
 
-- **OpenAPI / Swagger** — JSON & YAML, `$ref` resolution, tags, parameters, bodies, responses
-- **Interactive reference** — sidebar navigation, method badges, operation search
-- **Try it out** — live HTTP requests with params, body editor, bearer auth
-- **Code samples** — cURL, JavaScript, Python, Go, PHP
-- **Playground** — paste, upload, or fetch a public spec URL
-- **Auth-free** — anyone can use it immediately
-- **Self-host ready** — deploy to Vercel or run with Node
+- **OpenAPI / Swagger** — JSON & YAML, `$ref` resolution, tags, parameters, bodies, responses, security
+- **Interactive console** — auth (Bearer / API key / Basic), custom headers, cookies, content types, 30s timeout
+- **Command palette** — `⌘K` search, method filters, expand/collapse tags, deep links (`#operationId`)
+- **Focused & classic layouts** — single-operation client or continuous scroll
+- **Models & auth map** — component schemas with examples, security schemes
+- **10 languages** — cURL, JS, Python, Go, PHP, Ruby, Java, C#, Swift, Rust
+- **Environments** — `{{VAR}}` substitution + request history (browser-only)
+- **Export** — download OpenAPI as JSON or YAML
+- **Themes** — dark / light
+- **Auth-free product** — no accounts to use Aperio
 
 ## Quickstart
 
@@ -38,51 +41,12 @@ npm start
 
 ### Deploy on Vercel
 
-1. Push this repo to GitHub
-2. Import the project in [Vercel](https://vercel.com)
-3. Deploy — no environment variables required
-
-Or use the Vercel CLI:
-
 ```bash
 npx vercel
 ```
 
-## Usage
-
-1. Go to **Playground**
-2. Paste OpenAPI JSON/YAML, upload a file, or load a URL
-3. Explore endpoints, send test requests, copy code samples
-
-Try the built-in demo: `/demo` (Petstore sample).
-
-## Project structure
-
-```
-src/
-  app/                 # Next.js App Router pages
-    page.tsx           # Marketing homepage
-    playground/        # Spec loader + docs renderer
-    demo/              # Live Petstore demo
-    docs/              # Product documentation
-    api/fetch-spec/    # Public OpenAPI URL proxy
-  components/
-    api-reference/     # Interactive docs UI
-  lib/openapi/         # Parser, codegen, types
-public/samples/        # Sample OpenAPI documents
-```
-
-## Tech stack
-
-- [Next.js](https://nextjs.org) (App Router)
-- React 19 + TypeScript
-- Tailwind CSS
-- `js-yaml` for YAML OpenAPI documents
+No environment variables required.
 
 ## License
 
 [MIT](./LICENSE)
-
----
-
-Built for developers who want clear API docs without lock-in.
