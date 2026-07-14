@@ -3,7 +3,7 @@
 import type { OpenAPISchema } from "@/lib/openapi/types";
 import { clsx } from "clsx";
 import { useState } from "react";
-import { ChevronRight } from "lucide-react";
+import { IconChevronRight } from "@/components/icons";
 
 function typeLabel(schema?: OpenAPISchema): string {
   if (!schema) return "any";
@@ -40,14 +40,15 @@ function SchemaRow({
         onClick={() => hasChildren && setOpen((v) => !v)}
         className={clsx(
           "flex w-full items-start gap-2 px-3 py-2 text-left text-sm",
-          hasChildren ? "cursor-pointer hover:bg-white/[0.03]" : "cursor-default"
+          hasChildren ? "cursor-pointer hover:bg-black/[0.03] dark:hover:bg-white/[0.03]" : "cursor-default"
         )}
         style={{ paddingLeft: 12 + depth * 14 }}
       >
         {hasChildren ? (
-          <ChevronRight
+          <IconChevronRight
+            size={14}
             className={clsx(
-              "mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--text-dim)] transition",
+              "mt-0.5 shrink-0 text-[var(--text-dim)] transition",
               open && "rotate-90"
             )}
           />
@@ -56,7 +57,7 @@ function SchemaRow({
         )}
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <code className="font-mono text-[13px] text-[#93c5fd]">{name}</code>
+            <code className="font-mono text-[13px] text-[#60a5fa]">{name}</code>
             <span className="font-mono text-[11px] text-[#a78bfa]">
               {typeLabel(schema)}
             </span>
@@ -64,6 +65,12 @@ function SchemaRow({
               <span className="text-[10px] font-medium uppercase text-[#f87171]">
                 required
               </span>
+            )}
+            {schema.nullable && (
+              <span className="text-[10px] text-[var(--text-dim)]">nullable</span>
+            )}
+            {schema.deprecated && (
+              <span className="text-[10px] text-amber-500">deprecated</span>
             )}
             {schema.format && (
               <span className="text-[11px] text-[var(--text-dim)]">
@@ -121,9 +128,7 @@ export function SchemaView({
   title?: string;
 }) {
   if (!schema) {
-    return (
-      <p className="text-sm text-[var(--text-dim)]">No schema defined.</p>
-    );
+    return <p className="text-sm text-[var(--text-dim)]">No schema defined.</p>;
   }
 
   if (schema.properties) {

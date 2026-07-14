@@ -5,17 +5,19 @@ import { parseOpenAPI } from "@/lib/openapi/parse";
 import type { OpenAPIDocument } from "@/lib/openapi/types";
 import { ApiReference } from "@/components/api-reference/ApiReference";
 import {
-  AlertCircle,
-  FileUp,
-  Link2,
-  Loader2,
-  Sparkles,
-} from "lucide-react";
+  IconAlert,
+  IconEdit,
+  IconFileJson,
+  IconLink,
+  IconRefresh,
+  IconSpark,
+  IconUpload,
+} from "@/components/icons";
 import { clsx } from "clsx";
 
 const SAMPLE_URL = "/samples/petstore.json";
 
-type Mode = "paste" | "url" | "file";
+type Mode = "paste" | "url" | "file" | "edit";
 
 export function PlaygroundClient({
   initialDoc,
@@ -33,6 +35,7 @@ export function PlaygroundClient({
     try {
       const parsed = parseOpenAPI(text);
       setDoc(parsed);
+      setRaw(text);
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to parse document");
@@ -46,7 +49,6 @@ export function PlaygroundClient({
     try {
       const res = await fetch(SAMPLE_URL);
       const text = await res.text();
-      setRaw(text);
       loadText(text);
     } catch {
       setError("Could not load sample document.");
@@ -67,7 +69,6 @@ export function PlaygroundClient({
       const res = await fetch(proxy);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Fetch failed");
-      setRaw(data.content);
       loadText(data.content);
     } catch (err) {
       setError(
@@ -84,9 +85,7 @@ export function PlaygroundClient({
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
-      const text = String(reader.result ?? "");
-      setRaw(text);
-      loadText(text);
+      loadText(String(reader.result ?? ""));
     };
     reader.onerror = () => setError("Could not read file.");
     reader.readAsText(file);
@@ -97,23 +96,37 @@ export function PlaygroundClient({
       <div className="flex h-[calc(100vh-3.5rem)] flex-col overflow-hidden">
         <div className="flex h-10 shrink-0 flex-wrap items-center justify-between gap-2 border-b border-[var(--border)] bg-[var(--bg-elevated)] px-4">
           <div className="min-w-0">
-            <p className="truncate text-sm font-medium text-white">
+            <p className="truncate text-sm font-medium">
               {doc.info.title}
               <span className="ml-2 font-normal text-[var(--text-dim)]">
                 v{doc.info.version}
               </span>
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => {
-              setDoc(null);
-              setError(null);
-            }}
-            className="rounded-md border border-[var(--border)] px-2.5 py-1 text-xs font-medium text-[var(--text-muted)] hover:bg-white/5 hover:text-white"
-          >
-            Load another spec
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setMode("edit");
+                setDoc(null);
+              }}
+              className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border)] px-2.5 py-1 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text)]"
+            >
+              <IconEdit size={12} />
+              Edit spec
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setDoc(null);
+                setError(null);
+                setMode("paste");
+              }}
+              className="rounded-md border border-[var(--border)] px-2.5 py-1 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text)]"
+            >
+              Load another
+            </button>
+          </div>
         </div>
         <div className="min-h-0 flex-1 overflow-hidden">
           <ApiReference doc={doc} />
@@ -125,9 +138,10 @@ export function PlaygroundClient({
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-semibold tracking-tight text-white">
-          Playground
-        </h1>
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[#2563eb]/15 text-[#2563eb]">
+          <IconFileJson size={24} />
+        </div>
+        <h1 className="text-3xl font-semibold tracking-tight">Playground</h1>
         <p className="mt-2 text-sm text-[var(--text-dim)]">
           Load any OpenAPI or Swagger document — free, no account needed.
         </p>
@@ -136,44 +150,46 @@ export function PlaygroundClient({
       <div className="mb-3 flex flex-wrap gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-1">
         {(
           [
-            ["paste", "Paste"],
-            ["url", "URL"],
-            ["file", "Upload"],
+            ["paste", "Paste", IconFileJson],
+            ["url", "URL", IconLink],
+            ["file", "Upload", IconUpload],
+            ["edit", "Editor", IconEdit],
           ] as const
-        ).map(([id, label]) => (
+        ).map(([id, label, Icon]) => (
           <button
             key={id}
             type="button"
             onClick={() => setMode(id)}
             className={clsx(
-              "flex-1 rounded-md px-3 py-2 text-sm font-medium transition",
+              "flex flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-2 text-sm font-medium transition",
               mode === id
                 ? "bg-[#2563eb] text-white"
-                : "text-[var(--text-dim)] hover:text-zinc-300"
+                : "text-[var(--text-dim)] hover:text-[var(--text)]"
             )}
           >
+            <Icon size={14} />
             {label}
           </button>
         ))}
       </div>
 
       <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5">
-        {mode === "paste" && (
+        {(mode === "paste" || mode === "edit") && (
           <>
             <textarea
               value={raw}
               onChange={(e) => setRaw(e.target.value)}
-              rows={14}
+              rows={mode === "edit" ? 18 : 14}
               spellCheck={false}
               placeholder={`{\n  "openapi": "3.0.3",\n  "info": { "title": "My API", "version": "1.0.0" },\n  "paths": { ... }\n}`}
-              className="w-full resize-y rounded-lg border border-[var(--border)] bg-[var(--bg-input)] p-3 font-mono text-[12px] leading-relaxed text-zinc-200 outline-none placeholder:text-[var(--text-dim)] focus:border-[#2563eb]"
+              className="w-full resize-y rounded-lg border border-[var(--border)] bg-[var(--bg-input)] p-3 font-mono text-[12px] leading-relaxed outline-none placeholder:text-[var(--text-dim)] focus:border-[#2563eb]"
             />
             <button
               type="button"
               onClick={() => loadText(raw)}
               className="mt-3 inline-flex items-center gap-2 rounded-md bg-[#2563eb] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#1d4ed8]"
             >
-              <Sparkles className="h-4 w-4" />
+              <IconSpark size={16} />
               Render docs
             </button>
           </>
@@ -186,12 +202,15 @@ export function PlaygroundClient({
             </label>
             <div className="mt-2 flex gap-2">
               <div className="relative flex-1">
-                <Link2 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-dim)]" />
+                <IconLink
+                  size={16}
+                  className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-dim)]"
+                />
                 <input
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder="https://example.com/openapi.json"
-                  className="w-full rounded-md border border-[var(--border)] bg-[var(--bg-input)] py-2.5 pl-10 pr-3 text-sm text-zinc-200 outline-none focus:border-[#2563eb]"
+                  className="w-full rounded-md border border-[var(--border)] bg-[var(--bg-input)] py-2.5 pl-10 pr-3 text-sm outline-none focus:border-[#2563eb]"
                 />
               </div>
               <button
@@ -200,7 +219,11 @@ export function PlaygroundClient({
                 disabled={loading}
                 className="inline-flex items-center gap-2 rounded-md bg-[#2563eb] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#1d4ed8] disabled:opacity-60"
               >
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Fetch"}
+                {loading ? (
+                  <IconRefresh size={16} className="aperio-spin" />
+                ) : (
+                  "Fetch"
+                )}
               </button>
             </div>
             <p className="mt-2 text-xs text-[var(--text-dim)]">
@@ -212,8 +235,8 @@ export function PlaygroundClient({
 
         {mode === "file" && (
           <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-[var(--border)] bg-[var(--bg-input)] px-6 py-14 transition hover:border-[#2563eb]/50">
-            <FileUp className="h-8 w-8 text-[var(--text-dim)]" />
-            <span className="mt-3 text-sm font-medium text-zinc-300">
+            <IconUpload size={32} className="text-[var(--text-dim)]" />
+            <span className="mt-3 text-sm font-medium">
               Drop OpenAPI JSON or YAML
             </span>
             <span className="mt-1 text-xs text-[var(--text-dim)]">
@@ -229,8 +252,8 @@ export function PlaygroundClient({
         )}
 
         {error && (
-          <div className="mt-4 flex items-start gap-2 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-3 text-sm text-red-200">
-            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+          <div className="mt-4 flex items-start gap-2 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-3 text-sm text-red-400">
+            <IconAlert size={16} className="mt-0.5 shrink-0" />
             {error}
           </div>
         )}

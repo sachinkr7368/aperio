@@ -1,31 +1,32 @@
 import Link from "next/link";
 import { clsx } from "clsx";
 
-/** Simple geometric mark — no letter paths that break at small sizes */
+/** Premium A mark with depth + accent spark */
 export function LogoMark({ className }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 32 32"
+      viewBox="0 0 40 40"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={clsx("shrink-0", className)}
       aria-hidden
     >
-      <rect width="32" height="32" rx="8" fill="#2563eb" />
+      <rect width="40" height="40" rx="10" fill="#1e3a8a" />
+      <rect x="1.25" y="1.25" width="37.5" height="37.5" rx="8.75" fill="#2563eb" />
       <path
-        d="M8 22 L16 8 L24 22"
+        d="M11 28 L20 10 L29 28"
         stroke="white"
-        strokeWidth="2.4"
+        strokeWidth="3.2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        fill="none"
       />
       <path
-        d="M11.5 16.5 H20.5"
+        d="M14.5 21 H25.5"
         stroke="white"
-        strokeWidth="2.4"
+        strokeWidth="3.2"
         strokeLinecap="round"
       />
+      <circle cx="30" cy="12" r="3.2" fill="#93c5fd" />
     </svg>
   );
 }
@@ -43,12 +44,16 @@ export function Logo({
     <Link
       href={href}
       className={clsx(
-        "inline-flex items-center gap-2.5 font-semibold tracking-tight text-zinc-100",
+        "inline-flex items-center gap-2.5 font-semibold tracking-tight text-[var(--text)]",
         className
       )}
     >
       <LogoMark className="h-7 w-7" />
-      {showWordmark && <span className="text-[15px]">Aperio</span>}
+      {showWordmark && (
+        <span className="text-[15px] tracking-tight">
+          Aperio
+        </span>
+      )}
     </Link>
   );
 }

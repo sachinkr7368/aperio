@@ -164,11 +164,45 @@ export default function DocsPage() {
               snippets from your current parameter and body values:
             </p>
             <ul>
-              <li>cURL</li>
-              <li>JavaScript (fetch)</li>
-              <li>Python (requests)</li>
-              <li>Go (net/http)</li>
-              <li>PHP (cURL)</li>
+              <li>cURL, JavaScript (fetch), Python (requests)</li>
+              <li>Go, PHP, Ruby, Java, C#, Swift, Rust</li>
+            </ul>
+
+            <h2 id="more-features">More features</h2>
+            <ul>
+              <li>
+                <strong className="text-zinc-300">Models</strong> — browse
+                component schemas
+              </li>
+              <li>
+                <strong className="text-zinc-300">Auth schemes</strong> — view
+                security schemes from the OpenAPI document
+              </li>
+              <li>
+                <strong className="text-zinc-300">Env variables</strong> — use{" "}
+                <code>{"{{KEY}}"}</code> in servers, tokens, params, and bodies
+                (stored in your browser only)
+              </li>
+              <li>
+                <strong className="text-zinc-300">Request history</strong> —
+                last 50 requests locally
+              </li>
+              <li>
+                <strong className="text-zinc-300">Export</strong> — download
+                OpenAPI as JSON or YAML
+              </li>
+              <li>
+                <strong className="text-zinc-300">Dark / light theme</strong> —
+                toggle from the header
+              </li>
+              <li>
+                <strong className="text-zinc-300">Method filter</strong> —
+                filter endpoints by HTTP method; expand/collapse tags
+              </li>
+              <li>
+                <strong className="text-zinc-300">Server variables</strong> —
+                fill OpenAPI server template variables
+              </li>
             </ul>
 
             <h2 id="self-host">Self-hosting</h2>

@@ -2,52 +2,54 @@ import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import {
-  BookOpen,
-  Code2,
-  FileJson,
-  Globe,
-  Unlock,
-  Play,
-  Sparkles,
-  Zap,
-} from "lucide-react";
+  IconBook,
+  IconCode,
+  IconFileJson,
+  IconGithub,
+  IconGlobe,
+  IconLayers,
+  IconPlay,
+  IconSpark,
+  IconUnlock,
+  IconZap,
+} from "@/components/icons";
 
 const features = [
   {
-    icon: FileJson,
+    icon: IconFileJson,
     title: "OpenAPI & Swagger first",
     description:
-      "Paste JSON or YAML, upload a file, or load from a URL. Aperio parses OpenAPI 3.x and Swagger 2.0 client-side.",
+      "Paste JSON or YAML, upload a file, fetch a URL, or use the live editor. Client-side parsing with $ref resolution.",
   },
   {
-    icon: Play,
-    title: "Try it out",
+    icon: IconPlay,
+    title: "Full request client",
     description:
-      "Send live requests from the browser. Edit parameters, bodies, and auth (Bearer, API key, Basic).",
+      "Send live requests with params, cookies, content types, server variables, and response headers + timing.",
   },
   {
-    icon: Code2,
-    title: "Code samples",
+    icon: IconCode,
+    title: "10 code languages",
     description:
-      "Copy ready snippets in cURL, JavaScript, Python, Go, and PHP from your current request setup.",
+      "cURL, JavaScript, Python, Go, PHP, Ruby, Java, C#, Swift, and Rust — generated from your setup.",
   },
   {
-    icon: Sparkles,
-    title: "Modern reference UI",
+    icon: IconLayers,
+    title: "Models & security",
     description:
-      "Three-pane layout: endpoints & models, documentation, and a sticky request client — like a pro API console.",
+      "Browse component schemas, security schemes, tags, method filters, and export OpenAPI as JSON or YAML.",
   },
   {
-    icon: Unlock,
+    icon: IconUnlock,
     title: "Auth-free forever",
     description:
-      "No accounts, no paywalls. Anyone can open Aperio and document or explore an API immediately.",
+      "No accounts, no paywalls. Optional Bearer / API key / Basic only for calling protected APIs you document.",
   },
   {
-    icon: Globe,
-    title: "Self-host or use online",
+    icon: IconGlobe,
+    title: "Env vars & history",
     description:
-      "Deploy on Vercel in minutes or run locally. MIT licensed — fork it and brand it your way.",
+      "Local {{ENV}} variables, request history, dark/light theme — all in your browser. Self-host on Vercel.",
   },
 ];
 
@@ -60,12 +62,12 @@ const steps = [
   {
     n: "02",
     title: "Drop it in the playground",
-    body: "Paste, upload, or fetch a URL. Instant sidebar of endpoints and models.",
+    body: "Paste, upload, fetch a URL, or edit live. Instant sidebar of endpoints, models, and auth schemes.",
   },
   {
     n: "03",
     title: "Share beautiful docs",
-    body: "Interactive reference with try-it-out and code samples. Free for your whole team.",
+    body: "Interactive reference with try-it-out, 10 languages of code samples, and zero signup friction.",
   },
 ];
 
@@ -78,12 +80,12 @@ export default function HomePage() {
           <div className="mx-auto max-w-6xl px-4 pb-20 pt-16 sm:px-6 sm:pt-20">
             <div className="mx-auto max-w-3xl text-center">
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-panel)] px-3 py-1 text-xs font-medium text-[var(--text-muted)]">
-                <Zap className="h-3.5 w-3.5 text-[#2563eb]" />
+                <IconZap size={14} className="text-[#2563eb]" />
                 Free · Open source · No signup
               </div>
-              <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl sm:leading-[1.1]">
+              <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl sm:leading-[1.1]">
                 API docs that developers{" "}
-                <span className="text-[#60a5fa]">actually use</span>
+                <span className="text-[#2563eb]">actually use</span>
               </h1>
               <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-[var(--text-muted)] sm:text-lg">
                 Aperio turns OpenAPI and Swagger into interactive documentation —
@@ -95,12 +97,12 @@ export default function HomePage() {
                   href="/playground"
                   className="inline-flex items-center gap-2 rounded-md bg-[#2563eb] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#1d4ed8]"
                 >
-                  <Play className="h-4 w-4" />
+                  <IconPlay size={16} />
                   Open playground
                 </Link>
                 <Link
                   href="/demo"
-                  className="inline-flex items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--bg-panel)] px-5 py-2.5 text-sm font-semibold text-zinc-200 transition hover:border-[#2563eb]/40 hover:bg-[#2563eb]/10"
+                  className="inline-flex items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--bg-panel)] px-5 py-2.5 text-sm font-semibold transition hover:border-[#2563eb]/40 hover:bg-[#2563eb]/10"
                 >
                   View live demo
                 </Link>
@@ -108,18 +110,15 @@ export default function HomePage() {
                   href="https://github.com/sachinkr7368/aperio"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-medium text-[var(--text-dim)] transition hover:text-white"
+                  className="inline-flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-medium text-[var(--text-dim)] transition hover:text-[var(--text)]"
                 >
-                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                    <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z" />
-                  </svg>
+                  <IconGithub size={16} />
                   GitHub
                 </a>
               </div>
             </div>
 
-            {/* Preview card */}
-            <div className="mx-auto mt-14 max-w-4xl overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] shadow-2xl shadow-black/40">
+            <div className="mx-auto mt-14 max-w-4xl overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] shadow-2xl shadow-black/20">
               <div className="flex items-center gap-2 border-b border-[var(--border)] px-4 py-2.5">
                 <span className="h-2.5 w-2.5 rounded-full bg-[#ef4444]/80" />
                 <span className="h-2.5 w-2.5 rounded-full bg-[#f59e0b]/80" />
@@ -153,11 +152,9 @@ export default function HomePage() {
                     <span className="rounded border border-[#22c55e]/25 bg-[#22c55e]/10 px-2 py-0.5 text-[11px] font-bold text-[#22c55e]">
                       GET
                     </span>
-                    <code className="font-mono text-sm text-zinc-200">/pets</code>
+                    <code className="font-mono text-sm">/pets</code>
                   </div>
-                  <p className="mt-2 text-sm font-medium text-white">
-                    List all pets
-                  </p>
+                  <p className="mt-2 text-sm font-medium">List all pets</p>
                   <p className="mt-1 text-xs text-[var(--text-dim)]">
                     Returns a paginated list of pets in the store.
                   </p>
@@ -174,7 +171,7 @@ export default function HomePage() {
         <section className="border-b border-[var(--border)] py-16">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <div className="mx-auto max-w-2xl text-center">
-              <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+              <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
                 Everything you need for API docs
               </h2>
               <p className="mt-3 text-sm text-[var(--text-dim)] sm:text-base">
@@ -187,10 +184,10 @@ export default function HomePage() {
                   key={f.title}
                   className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5 transition hover:border-[#2563eb]/40"
                 >
-                  <div className="mb-3 inline-flex rounded-lg bg-[#2563eb]/12 p-2.5 text-[#60a5fa]">
-                    <f.icon className="h-5 w-5" />
+                  <div className="mb-3 inline-flex rounded-lg bg-[#2563eb]/12 p-2.5 text-[#2563eb]">
+                    <f.icon size={20} />
                   </div>
-                  <h3 className="font-semibold text-white">{f.title}</h3>
+                  <h3 className="font-semibold">{f.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-[var(--text-dim)]">
                     {f.description}
                   </p>
@@ -202,7 +199,7 @@ export default function HomePage() {
 
         <section className="border-b border-[var(--border)] bg-[var(--bg-elevated)] py-16">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
-            <h2 className="text-center text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+            <h2 className="text-center text-2xl font-semibold tracking-tight sm:text-3xl">
               Up and running in minutes
             </h2>
             <div className="mt-10 grid gap-4 md:grid-cols-3">
@@ -211,12 +208,10 @@ export default function HomePage() {
                   key={s.n}
                   className="rounded-xl border border-[var(--border)] bg-[var(--bg)] p-6"
                 >
-                  <span className="font-mono text-sm font-semibold text-[#60a5fa]">
+                  <span className="font-mono text-sm font-semibold text-[#2563eb]">
                     {s.n}
                   </span>
-                  <h3 className="mt-3 text-lg font-semibold text-white">
-                    {s.title}
-                  </h3>
+                  <h3 className="mt-3 text-lg font-semibold">{s.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-[var(--text-dim)]">
                     {s.body}
                   </p>
@@ -228,8 +223,8 @@ export default function HomePage() {
 
         <section className="py-16">
           <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
-            <BookOpen className="mx-auto h-8 w-8 text-[#2563eb]" />
-            <h2 className="mt-4 text-2xl font-semibold text-white sm:text-3xl">
+            <IconBook size={32} className="mx-auto text-[#2563eb]" />
+            <h2 className="mt-4 text-2xl font-semibold sm:text-3xl">
               Ready to document your API?
             </h2>
             <p className="mt-3 text-[var(--text-dim)]">
@@ -238,13 +233,14 @@ export default function HomePage() {
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <Link
                 href="/playground"
-                className="inline-flex items-center gap-2 rounded-md bg-white px-5 py-2.5 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-200"
+                className="inline-flex items-center gap-2 rounded-md bg-[#2563eb] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#1d4ed8]"
               >
+                <IconSpark size={16} />
                 Start for free
               </Link>
               <Link
                 href="/docs"
-                className="inline-flex items-center gap-2 rounded-md border border-[var(--border)] px-5 py-2.5 text-sm font-semibold text-zinc-200 transition hover:bg-white/5"
+                className="inline-flex items-center gap-2 rounded-md border border-[var(--border)] px-5 py-2.5 text-sm font-semibold transition hover:bg-black/5 dark:hover:bg-white/5"
               >
                 Read the docs
               </Link>
