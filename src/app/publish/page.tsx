@@ -10,9 +10,10 @@ import {
 } from "@/components/icons";
 
 export const metadata: Metadata = {
-  title: "How to publish your API docs",
+  title: "How to Publish Free OpenAPI API Docs",
   description:
-    "Publish interactive OpenAPI documentation with Aperio — embed on your site, self-host, or use the free playground. No signup required.",
+    "Publish interactive OpenAPI documentation free — embed on your site, self-host, or use the Aperio playground. Open source alternative for API docs. No signup.",
+  alternates: { canonical: "/publish" },
 };
 
 const paths = [

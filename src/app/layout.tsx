@@ -13,40 +13,62 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = "https://aperio-nine.vercel.app";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
-    default: "Aperio — Beautiful free API documentation",
+    default:
+      "Aperio — Free Open Source OpenAPI Docs (API Reference Alternative)",
     template: "%s · Aperio",
   },
   description:
-    "Aperio is a free, open-source API documentation platform. Interactive OpenAPI references, request client, multi-language code samples, models, and environments — no signup required.",
+    "Free open-source OpenAPI documentation engine. Interactive API reference, try-it-out, code samples, linter, mock server, and spec diff. No signup. Self-host or embed. MIT licensed alternative for API docs.",
   applicationName: "Aperio",
   keywords: [
-    "OpenAPI",
-    "Swagger",
-    "API documentation",
-    "API reference",
-    "API client",
-    "open source",
-    "Aperio",
+    "OpenAPI documentation",
     "free API docs",
+    "open source API documentation",
+    "OpenAPI reference",
+    "Swagger UI alternative",
+    "free API documentation tool",
+    "OpenAPI linter",
+    "API mock from OpenAPI",
+    "interactive API docs",
+    "self-host API docs",
+    "Aperio",
   ],
-  authors: [{ name: "Aperio" }],
+  authors: [{ name: "Aperio", url: "https://github.com/sachinkr7368/aperio" }],
+  creator: "Aperio",
+  category: "technology",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "Aperio — Beautiful free API documentation",
+    title: "Aperio — Free Open Source OpenAPI Documentation",
     description:
-      "Interactive API docs from OpenAPI. Free forever. No signup. Open source.",
+      "Interactive API docs from OpenAPI. Lint, mock, diff, embed. Free forever. No signup.",
     type: "website",
+    url: siteUrl,
     siteName: "Aperio",
+    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Aperio — Beautiful free API documentation",
+    title: "Aperio — Free Open Source OpenAPI Docs",
     description:
-      "Interactive API docs from OpenAPI. Free forever. No signup.",
+      "Interactive API reference, lint, mock & diff. Free. No signup. MIT.",
   },
-  // Icons are primarily generated from src/app/icon.tsx + apple-icon.tsx
-  // (Next.js App Router). Public SVGs match the logo for PWA/fallback.
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   icons: {
     icon: [
       { url: "/favicon.svg?v=4", type: "image/svg+xml" },
@@ -72,6 +94,24 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "Aperio",
+    applicationCategory: "DeveloperApplication",
+    operatingSystem: "Web",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+    description:
+      "Free open-source OpenAPI documentation engine with interactive API reference, linter, mock, and diff.",
+    url: siteUrl,
+    license: "https://opensource.org/licenses/MIT",
+    codeRepository: "https://github.com/sachinkr7368/aperio",
+  };
+
   return (
     <html
       lang="en"
@@ -80,6 +120,10 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col bg-[var(--bg)] text-[var(--text)]">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <Providers>{children}</Providers>
       </body>
     </html>

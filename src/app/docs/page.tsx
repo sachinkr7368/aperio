@@ -4,9 +4,10 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Documentation",
+  title: "Docs — Free Open Source OpenAPI Platform",
   description:
-    "Aperio platform docs — reference, playground, linter, mock, diff, embed, and self-hosting.",
+    "Aperio documentation: interactive OpenAPI reference, playground, linter, mock, diff, embed, and self-hosting. Free API docs tool guide.",
+  alternates: { canonical: "/docs" },
 };
 
 const toc = [

@@ -3,9 +3,10 @@ import { Header } from "@/components/Header";
 import { PlaygroundClient } from "@/components/PlaygroundClient";
 
 export const metadata: Metadata = {
-  title: "Playground",
+  title: "OpenAPI Playground — Free Interactive API Docs",
   description:
-    "Load any OpenAPI or Swagger document and generate free interactive API docs with Aperio.",
+    "Free OpenAPI playground: paste or upload Swagger/OpenAPI and get interactive API documentation. No signup. Open source.",
+  alternates: { canonical: "/playground" },
 };
 
 export default function PlaygroundPage() {
