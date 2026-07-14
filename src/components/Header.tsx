@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Logo } from "./Logo";
 import { clsx } from "clsx";
 import {
+  IconChevronDown,
   IconGithub,
   IconMenu,
   IconMoon,
@@ -13,14 +14,23 @@ import {
 } from "./icons";
 import { useClientStore } from "@/lib/client-store";
 
+const product = [
+  { href: "/playground", label: "Playground", desc: "Import & render specs" },
+  { href: "/demo", label: "API Reference", desc: "Interactive docs demo" },
+  { href: "/lint", label: "Linter", desc: "Quality score your OpenAPI" },
+  { href: "/mock", label: "Mock", desc: "Responses from your spec" },
+  { href: "/compare", label: "Diff", desc: "Compare two versions" },
+  { href: "/catalog", label: "Catalog", desc: "Samples & embed" },
+];
+
 const nav = [
-  { href: "/playground", label: "Playground" },
   { href: "/docs", label: "Docs" },
-  { href: "/demo", label: "Live Demo" },
+  { href: "/pricing", label: "Pricing" },
 ];
 
 export function Header({ fullWidth = false }: { fullWidth?: boolean }) {
   const [open, setOpen] = useState(false);
+  const [prodOpen, setProdOpen] = useState(false);
   const { theme, toggleTheme } = useClientStore();
 
   return (
@@ -33,6 +43,39 @@ export function Header({ fullWidth = false }: { fullWidth?: boolean }) {
       >
         <Logo />
         <nav className="hidden items-center gap-0.5 md:flex">
+          <div
+            className="relative"
+            onMouseEnter={() => setProdOpen(true)}
+            onMouseLeave={() => setProdOpen(false)}
+          >
+            <button
+              type="button"
+              className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text)]"
+            >
+              Product
+              <IconChevronDown size={14} />
+            </button>
+            {prodOpen && (
+              <div className="absolute left-0 top-full z-50 w-72 pt-1">
+                <div className="surface grid gap-0.5 p-2">
+                  {product.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="rounded-lg px-3 py-2.5 hover:bg-[var(--bg-hover)]"
+                    >
+                      <span className="block text-sm font-medium text-[var(--text)]">
+                        {item.label}
+                      </span>
+                      <span className="block text-xs text-[var(--text-dim)]">
+                        {item.desc}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
           {nav.map((item) => (
             <Link
               key={item.href}
@@ -50,14 +93,16 @@ export function Header({ fullWidth = false }: { fullWidth?: boolean }) {
           >
             {theme === "dark" ? <IconSun size={16} /> : <IconMoon size={16} />}
           </button>
+          <Link href="/playground" className="btn-primary ml-2 !py-1.5 !text-xs">
+            Start free
+          </Link>
           <a
             href="https://github.com/sachinkr7368/aperio"
             target="_blank"
             rel="noreferrer"
-            className="ml-1.5 inline-flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-panel)] px-3 py-1.5 text-sm font-medium text-[var(--text)] transition hover:border-[var(--accent)]/50 hover:bg-[var(--accent-soft)]"
+            className="ml-1 inline-flex items-center gap-2 rounded-lg border border-[var(--border)] px-2.5 py-1.5 text-sm text-[var(--text)] hover:bg-[var(--bg-hover)]"
           >
             <IconGithub size={16} />
-            GitHub
           </a>
         </nav>
         <div className="flex items-center gap-1 md:hidden">
@@ -81,12 +126,12 @@ export function Header({ fullWidth = false }: { fullWidth?: boolean }) {
       </div>
       <div
         className={clsx(
-          "absolute left-0 right-0 border-b border-[var(--border)] bg-[var(--bg)] md:hidden",
+          "absolute left-0 right-0 max-h-[80vh] overflow-y-auto border-b border-[var(--border)] bg-[var(--bg)] md:hidden",
           open ? "block" : "hidden"
         )}
       >
         <div className="flex flex-col gap-0.5 px-3 py-2">
-          {nav.map((item) => (
+          {[...product, ...nav].map((item) => (
             <Link
               key={item.href}
               href={item.href}

@@ -15,82 +15,85 @@ import {
   IconTerminal,
   IconUnlock,
   IconZap,
+  IconShield,
+  IconBraces,
+  IconBox,
 } from "@/components/icons";
 
-const features = [
+const suite = [
   {
+    href: "/playground",
     icon: IconFileJson,
-    title: "First-class OpenAPI",
+    title: "Reference",
     description:
-      "JSON & YAML, $ref resolution, tags, parameters, bodies, responses, security schemes, and server variables.",
+      "Interactive OpenAPI docs with try-it-out, models, auth schemes, and dual layouts.",
   },
   {
-    icon: IconPlay,
-    title: "Interactive console",
+    href: "/lint",
+    icon: IconShield,
+    title: "Linter",
     description:
-      "Send live requests with auth, custom headers, cookies, content types, timeouts, and full response inspection.",
+      "Quality score your spec — operationIds, servers, path params, responses, and more.",
   },
   {
-    icon: IconCode,
-    title: "10 client languages",
+    href: "/mock",
+    icon: IconBraces,
+    title: "Mock",
     description:
-      "cURL, JavaScript, Python, Go, PHP, Ruby, Java, C#, Swift, and Rust — always in sync with your request.",
+      "Return example payloads from your OpenAPI without standing up a backend.",
   },
   {
-    icon: IconSearch,
-    title: "Command palette",
-    description:
-      "Jump to any endpoint with ⌘K. Filter by method, expand tags, deep-link with URL hashes.",
-  },
-  {
+    href: "/compare",
     icon: IconLayers,
-    title: "Models & auth map",
+    title: "Diff",
     description:
-      "Browse schemas with examples, security schemes, focused or classic scroll layouts, export JSON/YAML.",
+      "Compare two OpenAPI versions. See added, removed, and changed operations.",
   },
   {
-    icon: IconKey,
-    title: "Environments",
+    href: "/catalog",
+    icon: IconBox,
+    title: "Catalog & embed",
     description:
-      "Local {{ENV}} variables, request history, Bearer / API key / Basic for protected APIs you document.",
+      "Sample APIs plus iframe embeds for any public OpenAPI URL — no account.",
   },
+  {
+    href: "/docs",
+    icon: IconBook,
+    title: "Docs platform",
+    description:
+      "Self-host on Vercel, theme dark/light, environments, history, 10 SDK languages.",
+  },
+];
+
+const why = [
   {
     icon: IconUnlock,
-    title: "Zero gatekeeping",
-    description:
-      "No signup wall. No trial. MIT open source. Anyone can document and explore APIs for free.",
+    title: "No gatekeeping",
+    body: "No seats, no trial wall, no “talk to sales” for basic docs. Free forever under MIT.",
+  },
+  {
+    icon: IconZap,
+    title: "Minutes, not weeks",
+    body: "Paste a spec and ship interactive docs immediately. Lint and mock in the same browser tab.",
   },
   {
     icon: IconGlobe,
-    title: "Deploy anywhere",
-    description:
-      "One-click Vercel, or self-host with Next.js. Your brand, your domain, your rules.",
-  },
-  {
-    icon: IconTerminal,
-    title: "Developer-first UX",
-    description:
-      "Dark & light themes, premium typography, keyboard shortcuts, and a reference UI that feels modern.",
+    title: "Own your stack",
+    body: "Self-host, white-label, or embed. Your domain, your branding, your OpenAPI source of truth.",
   },
 ];
 
-const steps = [
-  {
-    n: "01",
-    title: "Import your OpenAPI",
-    body: "Paste, upload, fetch a URL, or edit live in the playground. Works with OpenAPI 3.x and Swagger 2.0.",
-  },
-  {
-    n: "02",
-    title: "Explore & try",
-    body: "Navigate tags, models, and security. Send requests, inspect responses, copy SDK snippets in 10 languages.",
-  },
-  {
-    n: "03",
-    title: "Ship & share",
-    body: "Export specs, self-host Aperio, or keep using the free cloud site. No account required for readers.",
-  },
-];
+const compareRows = [
+  ["Interactive API reference", true],
+  ["Try-it-out client", true],
+  ["Multi-language code samples", true],
+  ["OpenAPI linter / score", true],
+  ["Mock from OpenAPI", true],
+  ["Spec diff / changelog assist", true],
+  ["Embed without account", true],
+  ["Self-host (MIT)", true],
+  ["$0 with full features", true],
+] as const;
 
 export default function HomePage() {
   return (
@@ -100,19 +103,21 @@ export default function HomePage() {
         <section className="hero-grid overflow-hidden border-b border-[var(--border)]">
           <div className="mx-auto max-w-6xl px-4 pb-20 pt-16 sm:px-6 sm:pt-24">
             <div className="mx-auto max-w-3xl text-center">
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)]/80 px-3.5 py-1.5 text-xs font-medium text-[var(--text-muted)] shadow-sm backdrop-blur">
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)]/80 px-3.5 py-1.5 text-xs font-medium text-[var(--text-muted)]">
                 <IconZap size={14} className="text-[var(--accent)]" />
-                Free forever · Open source · No signup
+                Open-source API platform · Reference · Lint · Mock · Diff
               </div>
-              <h1 className="text-4xl font-semibold tracking-[-0.03em] text-[var(--text)] sm:text-6xl sm:leading-[1.05]">
-                Beautiful API docs
+              <h1 className="text-4xl font-semibold tracking-[-0.03em] sm:text-6xl sm:leading-[1.05]">
+                The free API docs stack
                 <br />
-                <span className="text-[var(--accent)]">from your OpenAPI</span>
+                <span className="text-[var(--accent)]">
+                  teams actually ship with
+                </span>
               </h1>
               <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-[var(--text-muted)] sm:text-lg">
-                Aperio is a free, open-source API documentation platform.
-                Interactive references, a full request client, multi-language
-                SDKs, models, and environments — without the enterprise tax.
+                Aperio is built as a serious alternative to paid API
+                documentation platforms: beautiful references, a real request
+                client, linting, mocks, and version diffs — without the seat tax.
               </p>
               <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
                 <Link href="/playground" className="btn-primary">
@@ -120,98 +125,40 @@ export default function HomePage() {
                   Open playground
                 </Link>
                 <Link href="/demo" className="btn-secondary">
-                  View live demo
+                  Live API demo
                 </Link>
                 <a
                   href="https://github.com/sachinkr7368/aperio"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-[var(--text-dim)] transition hover:text-[var(--text)]"
+                  className="inline-flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-[var(--text-dim)] hover:text-[var(--text)]"
                 >
                   <IconGithub size={16} />
-                  Star on GitHub
+                  GitHub
                 </a>
               </div>
             </div>
 
-            {/* Product preview */}
             <div className="surface mx-auto mt-16 max-w-4xl overflow-hidden">
               <div className="flex items-center gap-2 border-b border-[var(--border)] px-4 py-2.5">
                 <span className="h-2.5 w-2.5 rounded-full bg-[#ef4444]/80" />
                 <span className="h-2.5 w-2.5 rounded-full bg-[#eab308]/80" />
                 <span className="h-2.5 w-2.5 rounded-full bg-[#22c55e]/80" />
                 <span className="ml-3 font-mono text-xs text-[var(--text-dim)]">
-                  aperio.app · API reference
-                </span>
-                <span className="ml-auto hidden rounded border border-[var(--border)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--text-dim)] sm:inline">
-                  ⌘K
+                  aperio · platform
                 </span>
               </div>
-              <div className="grid sm:grid-cols-[220px_1fr]">
-                <div className="hidden border-r border-[var(--border)] p-3 sm:block">
-                  <div className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-[var(--text-dim)]">
-                    pets
+              <div className="grid divide-y divide-[var(--border)] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+                {[
+                  ["Reference", "⌘K search · try-it · SDKs"],
+                  ["Linter", "Score A–F · fix before publish"],
+                  ["Mock + Diff", "Ship UI while API evolves"],
+                ].map(([t, d]) => (
+                  <div key={t} className="p-5">
+                    <p className="text-sm font-semibold">{t}</p>
+                    <p className="mt-1 text-xs text-[var(--text-dim)]">{d}</p>
                   </div>
-                  {[
-                    ["GET", "/pets", "text-[#22c55e]"],
-                    ["POST", "/pets", "text-[#3b82f6]"],
-                    ["GET", "/pets/{id}", "text-[#22c55e]"],
-                    ["DELETE", "/pets/{id}", "text-[#ef4444]"],
-                  ].map(([m, p, c]) => (
-                    <div
-                      key={p + m}
-                      className="mb-0.5 flex items-center gap-2 rounded-md px-2 py-1.5 text-xs text-[var(--text-muted)]"
-                    >
-                      <span className={`font-bold ${c}`}>{m}</span>
-                      <span className="font-mono">{p}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="grid gap-0 sm:grid-cols-[1.1fr_0.9fr]">
-                  <div className="border-b border-[var(--border)] p-5 sm:border-b-0 sm:border-r">
-                    <div className="flex items-center gap-2">
-                      <span className="rounded-md border border-[#22c55e]/25 bg-[#22c55e]/10 px-2 py-0.5 text-[11px] font-bold text-[#22c55e]">
-                        GET
-                      </span>
-                      <code className="font-mono text-sm">/pets</code>
-                    </div>
-                    <p className="mt-2 text-sm font-medium">List all pets</p>
-                    <p className="mt-1 text-xs text-[var(--text-dim)]">
-                      Returns a paginated list of pets in the store.
-                    </p>
-                    <div className="mt-4 space-y-1.5 text-[11px] text-[var(--text-dim)]">
-                      <div className="flex justify-between rounded-md border border-[var(--border)] px-2 py-1.5">
-                        <span className="font-mono text-[#93c5fd]">limit</span>
-                        <span>query · integer</span>
-                      </div>
-                      <div className="flex justify-between rounded-md border border-[var(--border)] px-2 py-1.5">
-                        <span className="font-mono text-[#93c5fd]">status</span>
-                        <span>query · enum</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-[var(--bg-panel)] p-4">
-                    <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-dim)]">
-                      Test request
-                    </p>
-                    <div className="mt-2 rounded-md border border-[var(--border)] bg-[var(--bg-input)] p-2 font-mono text-[10px] text-[var(--text-muted)]">
-                      curl -X GET &apos;…/pets?limit=20&apos;
-                    </div>
-                    <div className="mt-3 flex gap-1">
-                      {["cURL", "JS", "Python", "Go"].map((l) => (
-                        <span
-                          key={l}
-                          className="rounded bg-[var(--bg-input)] px-2 py-0.5 text-[10px] text-[var(--text-dim)]"
-                        >
-                          {l}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="mt-4 rounded-md bg-[var(--accent)] py-2 text-center text-xs font-semibold text-white">
-                      Send
-                    </div>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
@@ -221,17 +168,18 @@ export default function HomePage() {
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-                Everything a modern API platform needs
+                Full product suite
               </h2>
-              <p className="mt-3 text-sm text-[var(--text-dim)] sm:text-base">
-                Designed for teams that want polished docs without lock-in.
+              <p className="mt-3 text-sm text-[var(--text-dim)]">
+                Not just a docs skin — tooling around the OpenAPI lifecycle.
               </p>
             </div>
             <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {features.map((f) => (
-                <div
+              {suite.map((f) => (
+                <Link
                   key={f.title}
-                  className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5 transition hover:border-[var(--accent)]/35"
+                  href={f.href}
+                  className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5 transition hover:border-[var(--accent)]/40"
                 >
                   <div className="mb-3 inline-flex rounded-lg bg-[var(--accent-soft)] p-2.5 text-[var(--accent)]">
                     <f.icon size={20} />
@@ -240,7 +188,7 @@ export default function HomePage() {
                   <p className="mt-2 text-sm leading-relaxed text-[var(--text-dim)]">
                     {f.description}
                   </p>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -248,24 +196,67 @@ export default function HomePage() {
 
         <section className="border-b border-[var(--border)] bg-[var(--bg-elevated)] py-16">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
-            <h2 className="text-center text-2xl font-semibold tracking-tight sm:text-3xl">
-              From spec to docs in minutes
+            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+              <div>
+                <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+                  Why teams choose Aperio
+                </h2>
+                <div className="mt-8 space-y-6">
+                  {why.map((w) => (
+                    <div key={w.title} className="flex gap-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--accent-soft)] text-[var(--accent)]">
+                        <w.icon size={18} />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">{w.title}</h3>
+                        <p className="mt-1 text-sm text-[var(--text-dim)]">
+                          {w.body}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="surface overflow-hidden">
+                <div className="border-b border-[var(--border)] px-4 py-3 text-sm font-semibold">
+                  Platform capabilities
+                </div>
+                <ul>
+                  {compareRows.map(([label]) => (
+                    <li
+                      key={label}
+                      className="flex items-center justify-between border-b border-[var(--border-subtle)] px-4 py-2.5 text-sm last:border-0"
+                    >
+                      <span className="text-[var(--text-muted)]">{label}</span>
+                      <span className="font-medium text-[#22c55e]">Included</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="border-b border-[var(--border)] py-16">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <h2 className="text-center text-2xl font-semibold tracking-tight">
+              Built for developers
             </h2>
-            <div className="mt-10 grid gap-4 md:grid-cols-3">
-              {steps.map((s) => (
+            <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {(
+                [
+                  [IconSearch, "⌘K command palette"],
+                  [IconCode, "10 client SDKs"],
+                  [IconKey, "Env {{vars}} + history"],
+                  [IconTerminal, "Export JSON / YAML"],
+                ] as const
+              ).map(([Icon, label]) => (
                 <div
-                  key={s.n}
-                  className="rounded-xl border border-[var(--border)] bg-[var(--bg)] p-6"
+                  key={label}
+                  className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3"
                 >
-                  <span className="font-mono text-sm font-semibold text-[var(--accent)]">
-                    {s.n}
-                  </span>
-                  <h3 className="mt-3 text-lg font-semibold tracking-tight">
-                    {s.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-[var(--text-dim)]">
-                    {s.body}
-                  </p>
+                  <Icon size={18} className="text-[var(--accent)]" />
+                  <span className="text-sm font-medium">{label}</span>
                 </div>
               ))}
             </div>
@@ -274,20 +265,20 @@ export default function HomePage() {
 
         <section className="py-20">
           <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
-            <IconBook size={32} className="mx-auto text-[var(--accent)]" />
+            <IconSpark size={32} className="mx-auto text-[var(--accent)]" />
             <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">
-              Ship documentation your developers will love
+              Ship API docs that match your product quality
             </h2>
             <p className="mt-3 text-[var(--text-dim)]">
-              Free forever. Open source. No credit card. No waitlist.
+              Free forever. Open source. No credit card. Compete on product — not
+              on documentation tooling bills.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <Link href="/playground" className="btn-primary">
-                <IconSpark size={16} />
-                Start for free
+                Start free
               </Link>
-              <Link href="/docs" className="btn-secondary">
-                Read the docs
+              <Link href="/pricing" className="btn-secondary">
+                See pricing
               </Link>
             </div>
           </div>
