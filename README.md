@@ -4,6 +4,8 @@
 
 Aperio turns your OpenAPI documents into beautiful interactive API references — with try-it-out requests, multi-language code samples, schema browsers, and search. No accounts. No paywalls. MIT licensed.
 
+**Live site:** [https://aperio-nine.vercel.app](https://aperio-nine.vercel.app)
+
 ![Aperio](https://img.shields.io/badge/license-MIT-blue) ![Next.js](https://img.shields.io/badge/Next.js-16-black) ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6)
 
 ## Features
