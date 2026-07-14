@@ -1,0 +1,429 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Aperio Petstore Demo",
+    "description": "A sample OpenAPI document showcasing Aperio's interactive API reference. Free, open-source, and ready to explore.",
+    "version": "1.2.0",
+    "contact": {
+      "name": "Aperio Team",
+      "url": "https://github.com/sachinkr7368/aperio"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://petstore.example.com/v1",
+      "description": "Demo server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "pets",
+      "description": "Everything about your pets"
+    },
+    {
+      "name": "store",
+      "description": "Access to pet store orders"
+    },
+    {
+      "name": "users",
+      "description": "Operations about users"
+    }
+  ],
+  "paths": {
+    "/pets": {
+      "get": {
+        "tags": ["pets"],
+        "summary": "List all pets",
+        "description": "Returns a paginated list of pets in the store.",
+        "operationId": "listPets",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of pets to return",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by pet status",
+            "schema": {
+              "type": "string",
+              "enum": ["available", "pending", "sold"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of pets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Pet" }
+                    },
+                    "total": { "type": "integer", "example": 42 }
+                  }
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": 1,
+                      "name": "Mochi",
+                      "status": "available",
+                      "category": "cat",
+                      "tags": ["friendly", "indoor"]
+                    }
+                  ],
+                  "total": 1
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["pets"],
+        "summary": "Create a pet",
+        "description": "Add a new pet to the store.",
+        "operationId": "createPet",
+        "requestBody": {
+          "required": true,
+          "description": "Pet to create",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/NewPet" },
+              "example": {
+                "name": "Mochi",
+                "status": "available",
+                "category": "cat",
+                "tags": ["friendly"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pet created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Pet" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+    "/pets/{petId}": {
+      "get": {
+        "tags": ["pets"],
+        "summary": "Get a pet by ID",
+        "operationId": "getPet",
+        "parameters": [
+          {
+            "name": "petId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the pet",
+            "schema": { "type": "integer", "format": "int64", "example": 1 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pet found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Pet" },
+                "example": {
+                  "id": 1,
+                  "name": "Mochi",
+                  "status": "available",
+                  "category": "cat",
+                  "tags": ["friendly", "indoor"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pet not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["pets"],
+        "summary": "Update a pet",
+        "operationId": "updatePet",
+        "parameters": [
+          {
+            "name": "petId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/NewPet" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated pet",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Pet" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearerAuth": [] }]
+      },
+      "delete": {
+        "tags": ["pets"],
+        "summary": "Delete a pet",
+        "operationId": "deletePet",
+        "parameters": [
+          {
+            "name": "petId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Pet deleted" },
+          "404": {
+            "description": "Pet not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+    "/store/orders": {
+      "post": {
+        "tags": ["store"],
+        "summary": "Place an order",
+        "operationId": "placeOrder",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Order" },
+              "example": {
+                "petId": 1,
+                "quantity": 1,
+                "shipDate": "2026-08-01T10:00:00Z",
+                "status": "placed"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Order placed",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Order" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/store/orders/{orderId}": {
+      "get": {
+        "tags": ["store"],
+        "summary": "Get order by ID",
+        "operationId": "getOrder",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Order" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "tags": ["users"],
+        "summary": "Create user",
+        "operationId": "createUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/User" },
+              "example": {
+                "username": "mochi_lover",
+                "email": "hello@example.com",
+                "firstName": "Ada",
+                "lastName": "Lovelace"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{username}": {
+      "get": {
+        "tags": ["users"],
+        "summary": "Get user by username",
+        "operationId": "getUser",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "example": "mochi_lover" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Paste a JWT token to authorize requests."
+      }
+    },
+    "schemas": {
+      "Pet": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": { "type": "integer", "format": "int64", "example": 1 },
+          "name": { "type": "string", "example": "Mochi" },
+          "status": {
+            "type": "string",
+            "enum": ["available", "pending", "sold"],
+            "example": "available"
+          },
+          "category": { "type": "string", "example": "cat" },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["friendly"]
+          }
+        }
+      },
+      "NewPet": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["available", "pending", "sold"]
+          },
+          "category": { "type": "string" },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+      "Order": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "petId": { "type": "integer", "format": "int64" },
+          "quantity": { "type": "integer", "minimum": 1 },
+          "shipDate": { "type": "string", "format": "date-time" },
+          "status": {
+            "type": "string",
+            "enum": ["placed", "approved", "delivered"]
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "username": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "firstName": { "type": "string" },
+          "lastName": { "type": "string" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": ["code", "message"],
+        "properties": {
+          "code": { "type": "string", "example": "not_found" },
+          "message": { "type": "string", "example": "Resource not found" }
+        }
+      }
+    }
+  }
+}

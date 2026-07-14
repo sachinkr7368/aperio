@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Aperio
 
-## Getting Started
+**Free, open-source API documentation from OpenAPI & Swagger.**
 
-First, run the development server:
+Aperio turns your OpenAPI documents into beautiful interactive API references — with try-it-out requests, multi-language code samples, schema browsers, and search. No accounts. No paywalls. MIT licensed.
+
+![Aperio](https://img.shields.io/badge/license-MIT-blue) ![Next.js](https://img.shields.io/badge/Next.js-16-black) ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6)
+
+## Features
+
+- **OpenAPI / Swagger** — JSON & YAML, `$ref` resolution, tags, parameters, bodies, responses
+- **Interactive reference** — sidebar navigation, method badges, operation search
+- **Try it out** — live HTTP requests with params, body editor, bearer auth
+- **Code samples** — cURL, JavaScript, Python, Go, PHP
+- **Playground** — paste, upload, or fetch a public spec URL
+- **Auth-free** — anyone can use it immediately
+- **Self-host ready** — deploy to Vercel or run with Node
+
+## Quickstart
 
 ```bash
+git clone https://github.com/sachinkr7368/aperio.git
+cd aperio
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+### Deploy on Vercel
 
-To learn more about Next.js, take a look at the following resources:
+1. Push this repo to GitHub
+2. Import the project in [Vercel](https://vercel.com)
+3. Deploy — no environment variables required
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Or use the Vercel CLI:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npx vercel
+```
 
-## Deploy on Vercel
+## Usage
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Go to **Playground**
+2. Paste OpenAPI JSON/YAML, upload a file, or load a URL
+3. Explore endpoints, send test requests, copy code samples
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Try the built-in demo: `/demo` (Petstore sample).
+
+## Project structure
+
+```
+src/
+  app/                 # Next.js App Router pages
+    page.tsx           # Marketing homepage
+    playground/        # Spec loader + docs renderer
+    demo/              # Live Petstore demo
+    docs/              # Product documentation
+    api/fetch-spec/    # Public OpenAPI URL proxy
+  components/
+    api-reference/     # Interactive docs UI
+  lib/openapi/         # Parser, codegen, types
+public/samples/        # Sample OpenAPI documents
+```
+
+## Tech stack
+
+- [Next.js](https://nextjs.org) (App Router)
+- React 19 + TypeScript
+- Tailwind CSS
+- `js-yaml` for YAML OpenAPI documents
+
+## License
+
+[MIT](./LICENSE)
+
+---
+
+Built for developers who want clear API docs without lock-in.
