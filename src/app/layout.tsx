@@ -45,13 +45,15 @@ export const metadata: Metadata = {
     description:
       "Interactive API docs from OpenAPI. Free forever. No signup.",
   },
+  // Icons are primarily generated from src/app/icon.tsx + apple-icon.tsx
+  // (Next.js App Router). Public SVGs match the logo for PWA/fallback.
   icons: {
     icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-      { url: "/icon-192.svg", type: "image/svg+xml", sizes: "192x192" },
+      { url: "/favicon.svg?v=4", type: "image/svg+xml" },
+      { url: "/icon-192.svg?v=4", type: "image/svg+xml", sizes: "192x192" },
     ],
-    apple: [{ url: "/apple-touch-icon.svg", type: "image/svg+xml" }],
-    shortcut: "/favicon.svg",
+    apple: [{ url: "/apple-touch-icon.svg?v=4", type: "image/svg+xml" }],
+    shortcut: "/favicon.svg?v=4",
   },
   manifest: "/site.webmanifest",
 };
